@@ -23,10 +23,10 @@ export default {
 
 <style>
 body {
-  background-color: purple;
+  background-color: #6f30a0;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  background-color: purple;
+  background-color: #6f30a0;
 }
 </style>

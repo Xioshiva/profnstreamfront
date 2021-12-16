@@ -6,17 +6,27 @@
             <p class="Author">Mr.Pump</p>
         </div>
         <div class="user_information">
-            <p class="Timer"> 4:59 </p>
-            <p class="credit"> 0,00</p>
+            <p class="Timer"> 4 : 59 </p>
+            <Icon class="myCoinIcon" icon="fa-solid:coins" />
+            <p class="Credit"> 0,00</p>
         </div>
     </div> 
 </template>
+<script>
+import { Icon } from '@iconify/vue2'
+
+export default {
+    components: {
+        Icon,
+    },
+}
+</script>
 
 <style>
 
 .top_navbar {
     overflow: hidden;
-    background-color: purple;
+    background-color: #6f30a0;
     display: flex;
     justify-content: space-between;
 }
@@ -27,7 +37,20 @@
 }
 .class_information p {
     margin: 0px 0px 0px 0px;
-    padding: 1vh 1vh 1vh 1vh;
+    padding: 1vh 0vh 1vh 1vh;
+    margin-top: auto;
+    opacity: 0.5;
+}
+
+.class_information .Title {
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 4vh;
+  opacity: 1;
+}
+
+.class_information .Author {
+    text-decoration: underline;
 }
 
 .user_information {
@@ -35,20 +58,26 @@
     color: white;
 }
 
-.Title {
-  font-weight: bold;
-  text-decoration: underline;
-  font-size: 4vh;
+.user_information .Timer{
+    color: #12ff00;
+    background-color: #993bbb;
+    border-style: solid;
+    border-radius: 2vh;
+    border-color: #12ff00;
+    padding: 1vh 2vh 0vh 2vh;
+    margin: auto;
+    font-size: 3vh;
+}
+.myCoinIcon {
+    margin: auto;
+    padding: 1vh 1vh 1vh 2vh;
+    font-size: 3vh;
 }
 
-.Author {
-    bottom: 0;
-    text-decoration: underline;
+.user_information .Credit {
+    margin: auto;
+    padding: 1vh 2vh 0vh 1vh;
+    font-size: 3vh;
 }
-
-
-
-
-
 
 </style>

@@ -33,8 +33,6 @@
       return {
         playerOptions: {
           // videojs and plugin options 
-          width: '1500',
-          height: '800',
           autoplay: false,
           controls: true,
           techOrder: ['flash', 'html5'],
@@ -75,9 +73,5 @@
 .vjs-custom-skin {
   width: 100%;
   height: 100%;
-}
-
-.btn {
-  display: flex;
 }
 </style>
