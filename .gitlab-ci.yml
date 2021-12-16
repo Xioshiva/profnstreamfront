@@ -4,8 +4,8 @@ cache:
   paths:
     - node_modules/
 
-
 test:
     script:
+    - cd frontend/
     - npm install
     - npm run test
