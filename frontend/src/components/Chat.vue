@@ -2,8 +2,7 @@
     <div class="Chat">
         <div class="Messages">
             <p>message1</p>
-            <p>message2</p>
-            <p>message3</p>
+            <p>message2</p>  
         </div>
         <form class="submitMessage">
             <div class="input">
@@ -27,11 +26,12 @@
 <style scoped>
 .Chat {
     background-color: #fff;
-    width: 385px;
+    width: 20%;
     display: flex;
     flex-direction: column;
     height: calc(100% - 48px);
     float: right;
+
 }
 
 button.chat {
@@ -96,10 +96,5 @@ form {
   margin: 0 0 20px;
 }
 
-@media screen and (max-width: 700px) {
-  .Chat {
-    width: calc(100% - 104px);
-    right: calc((100% + 56px) * -1);
-  }
-}
+
 </style>
