@@ -22,7 +22,8 @@ export default {
 </script>
 
 <style>
-body {
+
+html {
   background-color: #6f30a0;
   height: 100%;
   width: 100%;
@@ -30,7 +31,6 @@ body {
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   background-color: #6f30a0;
-  height: 100%;
-  width: 100%;
+  
 }
 </style>

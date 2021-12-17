@@ -1,99 +1,93 @@
 <template>
     <div class="Chat">
         <div class="Messages">
-            <p>message1</p>
-            <p>message2</p>  
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            <p>message2</p>
+            
         </div>
-        <form class="submitMessage">
-            <div class="input">
-                <br>
-                <textarea
-                    id="message"
-                    type="text"
-                    @keydown.enter="submitForm"
-                    v-model="text"
-                    placeholder="Écrivez votre message..."
-                />
-              <button class="submit-button" type="submit">
-                  <img :src="send" alt="" />
-              </button>
-            </div>
-            <br>
-        </form>
+        <div class="submitMessage">
+            <textarea
+                id="message"
+                type="text"
+                @keydown.enter="submitForm"
+                v-model="text"
+                placeholder="Écrivez votre message..."
+            />
+            <button class="submit-button" type="submit">
+                Chat
+            </button>
+        </div>
     </div>
 </template>
 
 <style scoped>
 .Chat {
     background-color: #fff;
-    width: 20%;
+    width: 20.2%;
+    display: inline-block;
+    flex-direction: column;
+    position: fixed;
+    right: 0;
+    top: 7%;
+    height: 100%;
+    border:3 solid #6f30a0;
+}
+
+.Messages {
+    height: 80%;
+    overflow: auto
+}
+
+.submitMessage {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 48px);
-    float: right;
-
+    height: 20%;
 }
 
-button.chat {
-  background-color: #000;
-  border: #000;
-  cursor: pointer;
-  border-radius: 16px 0 0 16px;
-  padding: 16px 14px 13px 18px;
+.submitMessage textarea {
+    background-color: #E0E0E0;
+    border-color: #000;
+    border-radius: 2%;
+    resize: none;
+    font-family: "Ropa Sans", sans-serif;
 }
-.Messages {
-  flex: 1;
-  padding-right: 32px;
-  padding-bottom: 180%;
-}
-input {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: flex-start;
-}
-
-input[type="submit"] {
-    margin-left: -50px;
-    height: 20px;
-    width: 50px;
-}
-
-.input textarea {
-  width: 100%;
-  padding: 20px;
-  border-radius: 25px;
-  background: #E0E0E0;
-  border: #000;
-  resize: none;
-  font-family: "Ropa Sans", sans-serif;
-  font-size: 20px;
-  padding-bottom: 12px;
-}
-.input textarea::placeholder {
-  position: absolute;
-  left: 0;
-  top: 20px;
-  font-family: "Ropa Sans", sans-serif;
-  font-size: 16px;
-  padding: 0 20px;
-}
-
-form {
-  border-bottom: 10px solid #c8d1dc;
-}
-.submit-button {
-  padding: 20px;
-  margin: 16px 14px 0 350px;
-  border: #000;
-}
-
-.chat-message {
-  color: #121a24;
-  text-align: left;
-  font-size: 14px;
-  line-height: 18px;
-  margin: 0 0 20px;
+.submitMessage button {
+    margin-top: 2%;
+    border-radius: 2%;
+    height: 20%;
+    width: 30%;
+    background-color: #6f30a0;
+    color: white;
 }
 
 

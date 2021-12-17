@@ -29,6 +29,10 @@ export default {
     background-color: #6f30a0;
     display: flex;
     justify-content: space-between;
+    position: fixed;
+    top: 0; /* Position the navbar at the top of the page */
+    width: 100%; /* Full width */
+    z-index: 1;
 }
 
 .class_information{
