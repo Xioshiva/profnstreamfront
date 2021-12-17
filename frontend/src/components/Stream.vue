@@ -75,8 +75,9 @@
 <style scoped>
 .streaming {
   float: left;
-  position: relative;
   width: 80%;
-  height: 100%;
+  z-index: -1;
+  padding-top: 3%;
 }
+
 </style>
