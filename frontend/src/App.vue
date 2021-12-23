@@ -11,6 +11,7 @@ import Stream from './components/Stream.vue'
 import 'video.js/dist/video-js.css'
 import NavBar from '@/components/NavBar'
 import Chat from '@/components/Chat'
+
 export default {
   name: 'App',
   components: {
