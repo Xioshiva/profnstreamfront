@@ -2,37 +2,7 @@
     <div class="Chat">
         <div class="Messages">
             <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
-            <p>message2</p>
+
             
         </div>
         <div class="submitMessage">
