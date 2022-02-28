@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@vue/composition-api": "^1.4.9",
+    "socket.io-client": "^4.4.1"
+  }
+}
