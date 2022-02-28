@@ -3,9 +3,9 @@
     <div class="Messages"></div>
     <div class="submitMessage">
       <textarea
-        id="message_content"
+        id="message"
         type="text"
-        @keydown.enter="submitForm"
+        @keypress.enter="sendMessage()"
         v-model="text"
         placeholder="Écrivez votre message..."
       />
@@ -56,28 +56,19 @@ export default defineComponent({
   setup() {},
   methods: {
     sendMessage() {
-      var msg = document.getElementById("message_content").value;
-      msg.addEventListener("keyup", function(event) {
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          document.getElementsByClassName("btn_send").click();
-        }
-      });
-      document.getElementById("message_content").value = "";
+      var msg = document.getElementById("message").value;
+      document.getElementById("message").value = "";
       if (msg != "") {
         var roomID = "roomID";
         var userID = id;
         socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID });
         document.getElementsByClassName("Messages")[0].innerHTML +=
-          "<p>" + userID + ": " + msg + "</p>";
+          "<p class=\"kek\">" + userID + ": " + msg + "</p>";
       }
     },
   },
 });
-
 </script>
-
-
 
 <style scoped>
 .Chat {
@@ -90,6 +81,7 @@ export default defineComponent({
   top: 7%;
   height: 100%;
   border: 3 solid #6f30a0;
+  font-size: 2vh;
 }
 
 .Messages {
@@ -102,10 +94,10 @@ export default defineComponent({
   flex-direction: column;
   height: 20%;
   background-color: #e0e0e0;
-  padding-left: 10px;
-  height: 90px;
-  border-radius: 20px;
-  margin: 10px;
+  padding-left: 1vh;
+  height: 10vh;
+  border-radius: 2vh;
+  margin: 1vh;
 }
 
 .submitMessage textarea {
@@ -116,8 +108,9 @@ export default defineComponent({
   border-style: none; 
   border-color: Transparent; 
   overflow: auto;
-  height: 30px;
-  width: 280px;
+  height: 3vh;
+  width: 30vh;
+  font-size: 2vh;
 
   border: none;
   overflow: auto;
@@ -135,7 +128,18 @@ export default defineComponent({
 }
 
 .btn_send{
-  padding-top: 12px;
-  padding-left: 20px;
+  padding-top: 2vh;
+  padding-left: 1vh;
+  width: 4vh;
+  height: 4vh;
+}
+
+.kek{
+  padding-left: 10px;
+  margin-left: 10px;
+}
+
+#question{
+  width: 2vh;
 }
 </style>

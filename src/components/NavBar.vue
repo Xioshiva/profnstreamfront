@@ -55,6 +55,11 @@ export default {
 
 .class_information .Author {
     text-decoration: underline;
+    font-size: 2vh;
+}
+
+p {
+    font-size: 2vh;
 }
 
 .user_information {

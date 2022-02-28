@@ -5,7 +5,7 @@
     </video-player>
 
     <div class="Description cours">
-      <h1>Électrodynamique</h1>
+      <h2>Électrodynamique</h2>
         <p>L'électrodynamique est la discipline physique qui étudie et traite des actions dynamiques entre les courants électriques. On distingue l'électrodynamique classique et l'électrodynamique quantique. Tout phénomène d'électrodynamique classique est décrit par les équations de Maxwell. </p>
       <h2>Histoire</h2>
         <p>En 1820, André-Marie Ampère, après avoir été informé de l'expérience de Hans Christian Ørsted mettant en évidence l'interaction entre un courant électrique et un aimant, formalise mathématiquement, pour la première fois, les forces d'interaction entre aimants et courants et les forces mutuelles entre courants. Il publiera une suite d'articles entre 1820 et 1825 qui seront recueillis dans son ouvrage de 1826 intitulé "Théorie mathématique des phénomènes électrodynamiques, uniquement déduite de l'expérience"1. Ces travaux fondent l'électrodynamique et influencent considérablement la physique du XIXe siècle. La contribution de Michael Faraday mettant en évidence le phénomène d'induction et introduisant la notion de champ magnétique ont complété les bases expérimentales de l'électrodynamique. Les travaux d'Ampère et Faraday ont permis à James Clerk Maxwell de formaliser, avec l'utilisation d'équations différentielles, les équations qui portent aujourd'hui son nom. De fait, Maxwell publie en 1865 sa théorie sous la forme de vingt équations à vingt inconnues. C'est Oliver Heaviside qui, en 1884, réécrivit ces équations sous la forme de quatre équations vectorielles aux dérivées partielles qui constituent la base de l'électromagnétisme. </p>
@@ -82,6 +82,9 @@
 </script>
 
 <style scoped>
+h2 {
+  font-size: 3vh;
+}
 .streaming {
   float: left;
   width: 80%;
