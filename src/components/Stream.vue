@@ -92,5 +92,4 @@ h2 {
   padding-top: 3%;
   color: white;
 }
-
 </style>
