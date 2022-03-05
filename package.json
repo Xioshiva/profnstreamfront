@@ -9,6 +9,7 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@ivanv/vue-collapse-transition": "^1.0.2",
     "@jeremyhamm/vue-slider": "^0.2.0",
     "@vue/composition-api": "^1.4.9",
     "core-js": "^3.6.5",

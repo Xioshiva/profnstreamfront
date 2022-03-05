@@ -1,5 +1,5 @@
 <template>
-  <div class="streaming">
+  <div :style='test' class="streaming">
 
     <video-player class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied" @timeupdate="onTimeupdate">
     </video-player>
@@ -19,6 +19,7 @@
 
 <script>
   import videojs from 'video.js'
+  //import Chat from './Chat.vue'
   window.videojs = videojs
   // hls plugin for videojs6
   /*require('videojs-contrib-hls/dist/videojs-contrib-hls.js') cette ligne casse le programme*/
@@ -76,8 +77,8 @@
           .then(response => response.json())
           .then(data => console.log(data));
         console.log("hey");
-  }
-    }
+      }
+    },
   }
 </script>
 

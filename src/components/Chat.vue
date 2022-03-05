@@ -1,27 +1,34 @@
 <template>
-  <div class="Chat">
-    <div class="Messages"></div>
-    <div class="submitMessage">
-      <textarea
-        id="message"
-        type="text"
-        @keypress.enter="sendMessage()"
-        v-model="text"
-        placeholder="Écrivez votre message..."
-      />
-      <img src="../assets/btn_send.png" width="40" height="40" class="btn_send" v-on:click="sendMessage()" />
-      <input type="checkbox" id="question" name="subscribe">
-      <label for="subscribeNews">question</label>
+  <div>
+    <button :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}"> coucu </button>
+    <collapse-transition dimension="width">
+    <div class="ComponentChat" v-show="isOpen">
+      <div class="Messages"></div>
+      <div class="submitMessage">
+        <textarea
+          id="message"
+          type="text"
+          @keypress.enter="sendMessage()"
+          v-model="text"
+          placeholder="Écrivez votre message..."
+        />
+        <img src="../assets/btn_send.png" width="40" height="40" class="btn_send" v-on:click="sendMessage()" />
+        <input type="checkbox" id="question" name="subscribe">
+        <label for="subscribeNews">question</label>
+      </div>
+      <label>{{ checked }}</label>
     </div>
-    <label>{{ checked }}</label>
+    </collapse-transition>
   </div>
 </template>
 
 
 
 <script>
+import { CollapseTransition } from "@ivanv/vue-collapse-transition"
 import { defineComponent } from "@vue/composition-api";
 import { io } from "socket.io-client";
+
 const socket = io("http://localhost:3000", {
   origin: "*",
   extraHeaders: {
@@ -53,6 +60,13 @@ socket.on("recieve message", (args) => {
     "<p>" + args["userID"] + ": " + args["msg"] + "</p>";
 });
 export default defineComponent({
+  components: {
+    CollapseTransition,
+  },
+  data() {
+    return {isOpen: true}
+  },
+
   setup() {},
   methods: {
     sendMessage() {
@@ -66,12 +80,38 @@ export default defineComponent({
           "<p class=\"kek\">" + userID + ": " + msg + "</p>";
       }
     },
+    test: function() {
+      this.isOpen = !this.isOpen
+      this.$emit('isopen', this.isOpen);
+    }
   },
+  computed : {
+    CollapseMovmChat() {
+      if(this.isOpen) {
+        return {
+          right: '20.3%',
+        };
+      }else {
+        return { 
+          right: '0' 
+        }
+      }
+    },
+  }
 });
 </script>
 
 <style scoped>
-.Chat {
+
+.Collapsebtn {
+  display: flex;
+  flex-direction: column;
+  top: 7%;
+  position: fixed;
+  z-index: 1;
+}
+
+.ComponentChat {
   background-color: #fff;
   width: 20.2%;
   display: flex;
