@@ -47,18 +47,16 @@ function makeid(length) {
    }
    return result;
 }
-
 var id = makeid(5);
-
 var roomID = "roomID";
-
 socket.emit("init", roomID);
-
 socket.on("recieve message", (args) => {
   console.log("Recieved!");
   document.getElementsByClassName("Messages")[0].innerHTML +=
     "<p>" + args["userID"] + ": " + args["msg"] + "</p>";
 });
+
+
 export default defineComponent({
   components: {
     CollapseTransition,
@@ -76,8 +74,14 @@ export default defineComponent({
         var roomID = "roomID";
         var userID = id;
         socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID });
-        document.getElementsByClassName("Messages")[0].innerHTML +=
+        
+        if(document.getElementById("question").checked){
+          document.getElementsByClassName("Messages")[0].innerHTML +=
+          "<p style=\"color:red\" class=\"kek\">" + userID + ": " + msg + "</p>";
+        }else {
+          document.getElementsByClassName("Messages")[0].innerHTML +=
           "<p class=\"kek\">" + userID + ": " + msg + "</p>";
+        }
       }
     },
     test: function() {

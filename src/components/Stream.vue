@@ -1,5 +1,5 @@
 <template>
-  <div :style='test' class="streaming">
+  <div class="streaming" @some-event="isopen">
 
     <video-player class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied" @timeupdate="onTimeupdate">
     </video-player>
