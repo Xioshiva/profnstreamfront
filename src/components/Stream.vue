@@ -54,7 +54,7 @@
             src: "http://127.0.0.1:8000/live/test.m3u8"
           }
         ],
-        poster: "https://profngo.ch/images/logo_profNgo_400x153.png",
+        poster: "https://i.ibb.co/4R5J8G6/Dessin-sans-titre-3-1.png",
         notSupportedMessage: " This video is temporarily unplayable. Please try again later ",
 
       }

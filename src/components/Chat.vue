@@ -1,6 +1,7 @@
 <template>
   <div>
-    <button :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}"> coucu </button>
+    <img src="../assets/expand.png"   width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}" />
+    <img src="../assets/collapse.png" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}" />
     <collapse-transition dimension="width">
     <div class="ComponentChat" v-show="isOpen">
       <div class="Messages"></div>
@@ -76,11 +77,15 @@ export default defineComponent({
         socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID });
         
         if(document.getElementById("question").checked){
-          document.getElementsByClassName("Messages")[0].innerHTML +=
-          "<p style=\"color:red\" class=\"kek\">" + userID + ": " + msg + "</p>";
+          document.getElementsByClassName("Messages")[0].innerHTML =
+          "<div><span style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</span>" +
+          "<span style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</span></div>" + 
+          document.getElementsByClassName("Messages")[0].innerHTML;
         }else {
-          document.getElementsByClassName("Messages")[0].innerHTML +=
-          "<p class=\"kek\">" + userID + ": " + msg + "</p>";
+          document.getElementsByClassName("Messages")[0].innerHTML =
+          "<div><span style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</span>" +
+          "<span style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</span></div>" + 
+          document.getElementsByClassName("Messages")[0].innerHTML;
         }
       }
     },
@@ -93,10 +98,12 @@ export default defineComponent({
     CollapseMovmChat() {
       if(this.isOpen) {
         return {
-          right: '20.3%',
+          display: 'hidden',
+          right: '20.2%',
         };
       }else {
-        return { 
+        return {
+          display: 'hidden',
           right: '0' 
         }
       }
@@ -110,7 +117,7 @@ export default defineComponent({
 .Collapsebtn {
   display: flex;
   flex-direction: column;
-  top: 7%;
+  top: 85%;
   position: fixed;
   z-index: 1;
 }
@@ -130,7 +137,10 @@ export default defineComponent({
 
 .Messages {
   height: 80%;
+  padding-left: 5px;
   overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .submitMessage {
@@ -176,11 +186,6 @@ export default defineComponent({
   padding-left: 1vh;
   width: 4vh;
   height: 4vh;
-}
-
-.kek{
-  padding-left: 10px;
-  margin-left: 10px;
 }
 
 #question{
