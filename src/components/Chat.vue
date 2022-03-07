@@ -64,7 +64,7 @@ export default defineComponent({
   data() {
     return {
       isOpen: true,
-      imageSource: 'img/expand.png'
+      imageSource: require('@/assets/collapse.png')
     }
   },  
   setup() {},
@@ -93,9 +93,9 @@ export default defineComponent({
     collapse: function() {
       this.isOpen = !this.isOpen
       if(this.isOpen) {
-        this.imageSource = 'img/expand.png'
+        this.imageSource = require('@/assets/collapse.png')
       }else {
-        this.imageSource = 'img/collapse.png'
+        this.imageSource = require('@/assets/expand.png')
       }
       this.$emit('collapse', this.isOpen);
     },
@@ -137,6 +137,7 @@ export default defineComponent({
   height: 100%;
   border: 3 solid #6f30a0;
   font-size: 2vh;
+  z-index: 1;
 }
 
 .Messages {
