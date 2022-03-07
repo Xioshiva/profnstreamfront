@@ -1,14 +1,13 @@
 <template>
   <div>
-    <img src="../assets/expand.png"   width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}" />
-    <img src="../assets/collapse.png" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="test" v-class="{active : isOpen}" />
+    <img :src="imageSource" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="collapse"/>    
     <collapse-transition dimension="width">
     <div class="ComponentChat" v-show="isOpen">
       <div class="Messages"></div>
       <div class="submitMessage">
         <textarea
           id="message"
-          type="text"
+          type="text" 
           @keypress.enter="sendMessage()"
           v-model="text"
           placeholder="Écrivez votre message..."
@@ -63,9 +62,11 @@ export default defineComponent({
     CollapseTransition,
   },
   data() {
-    return {isOpen: true}
-  },
-
+    return {
+      isOpen: true,
+      imageSource: 'img/expand.png'
+    }
+  },  
   setup() {},
   methods: {
     sendMessage() {
@@ -89,21 +90,24 @@ export default defineComponent({
         }
       }
     },
-    test: function() {
+    collapse: function() {
       this.isOpen = !this.isOpen
-      this.$emit('isopen', this.isOpen);
-    }
+      if(this.isOpen) {
+        this.imageSource = 'img/expand.png'
+      }else {
+        this.imageSource = 'img/collapse.png'
+      }
+      this.$emit('collapse', this.isOpen);
+    },
   },
   computed : {
     CollapseMovmChat() {
       if(this.isOpen) {
         return {
-          display: 'hidden',
           right: '20.2%',
         };
       }else {
         return {
-          display: 'hidden',
           right: '0' 
         }
       }
