@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Chat @collapse="collapse"></Chat>
     <div :style="CollapseStream" class="streaming">
 
       <video-player class="vjs-custom-skin" ref="videoPlayer" :options="playerOptions" @ready="onPlayerReadied" @timeupdate="onTimeupdate">
@@ -17,6 +16,7 @@
           <p>Plusieurs musées d'histoire de l'électricité dans le monde permettent de retracer l'histoire de l'électrodynamique. Parmi eux nous pouvons citer le Musée Ampère près de Lyon, ou le Michel Faraday Museum à Londres. </p>
       </div>
     </div>
+    <Chat @collapse="collapse"></Chat>
   </div>
 </template>
 
