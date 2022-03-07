@@ -49,7 +49,7 @@ function makeid(length) {
 }
 var id = makeid(5);
 var roomID = "roomID";
-socket.emit("init", roomID);
+socket.emit("init", {roomID: roomID, userID: id});
 socket.on("recieve message", (args) => {
   console.log("Recieved!");
   if(args["question"] == 1){
