@@ -123,6 +123,8 @@ export default defineComponent({
   flex-direction: column;
   top: 85%;
   position: fixed;
+  height: 10%;
+  width: 3%;
   z-index: 1;
 }
 
