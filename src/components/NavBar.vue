@@ -15,6 +15,39 @@
 <script>
 import { Icon } from '@iconify/vue2'
 
+
+function toHHMMSS(time) {
+    var sec_num = time; // don't forget the second param
+    var minutes = Math.floor(sec_num / 60);
+    var seconds = time - (minutes * 60);
+
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return minutes+':'+seconds;
+}
+
+function getTime(userID, streamID){
+    //fetch
+    console.log(userID, streamID)
+    return 5*60;
+}
+
+function updateClock(time){
+    document.getElementsByClassName("Timer")[0].innerHTML = toHHMMSS(time);
+}
+
+var time = getTime("testman", "roomID");
+
+var timerInterval = window.setInterval(function(){
+    time -=1;
+    updateClock(time);
+    if(time <= 0){
+        clearInterval(timerInterval);
+    }
+}, 1000);
+
+
+
 export default {
     components: {
         Icon,
