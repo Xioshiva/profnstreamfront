@@ -14,7 +14,7 @@
 </template>
 <script>
 import { Icon } from '@iconify/vue2'
-
+  
 const myHeader = new Headers({
     'Access-Control-Allow-Origin': 'http://localhost:8080',
     'Accept': 'application/json',
@@ -32,11 +32,11 @@ function toHHMMSS(time) {
     return minutes+':'+seconds;
 }
 
-function getTime(userID, streamID){
-    return fetch("localhost:8080/time/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+async function getTime(userID, streamID){
+    console.log("heyyyyyyyyyyyyyyyyyy")
+    return fetch("http://localhost:8080/timer/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
         .then(res=>{
-            console.log(res);
-            return res.json
+            return res.json().then(o=>o["timer"])
         });
 }
 
@@ -50,16 +50,19 @@ function userHasCredit(userID){
 }
 
 getTime("testman", "roomID").then(a=>{
-    console.log(a);
-    var time = a
+    console.log("getTime Res:"  + a);
+    var time = Math.floor(Math.max(a,0)/1000)
+    updateClock(Math.floor(time));
+    if(time > 0){
     var timerInterval = window.setInterval(function(){
         time -=1;
-    updateClock(time);
+    updateClock(Math.floor(time));
     if(time <= 0){
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
             alert("Votre temps d'essai est terminé")
     }}}, 1000);
+    }
 });
 
 
