@@ -114,4 +114,10 @@ h2 {
   padding-top: 3%;
   color: white;
 }
+@media only screen and (max-width: 800px){
+  .streaming {
+    width: 100% !important;
+    height: 50% !important
+  }
+}
 </style>

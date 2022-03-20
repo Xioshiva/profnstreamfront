@@ -1,7 +1,7 @@
 <template>
   <div>
     <img :src="imageSource" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="collapse"/>    
-    <collapse-transition dimension="width">
+    <collapse-transition dimension="width" :duration="0">
     <div class="ComponentChat" v-show="isOpen">
       <div class="Messages"></div>
       <div class="submitMessage">
@@ -64,10 +64,17 @@ export default defineComponent({
   data() {
     return {
       isOpen: true,
-      imageSource: require('@/assets/collapse.png')
+      imageSource: require('@/assets/collapse.png'),
+      width: document.documentElement.clientWidth,
     }
   },  
   setup() {},
+  mounted(){
+    window.addEventListener('resize', this.onResize)
+  },
+  unmounted() {
+    window.removeEventListener('resize', this.onResize)
+  },
   methods: {
     sendMessage() {
       var msg = document.getElementById("message").value;
@@ -99,16 +106,44 @@ export default defineComponent({
       }
       this.$emit('collapse', this.isOpen);
     },
+    onResize(){
+      if(this.isOpen){
+        if(this.width > 800){
+          document.getElementsByClassName("Collapsebtn").style.right = "20.2%";
+        }else{
+          document.getElementsByClassName("Collapsebtn").style.top = "40% !important";
+        }
+      }else {
+        if(this.width > 800){
+          document.getElementsByClassName("Collapsebtn").style.top = "0% !important";
+        }else{
+          document.getElementsByClassName("Collapsebtn").style.right = "90% !important";
+        }
+      }
+    }
   },
   computed : {
     CollapseMovmChat() {
-      if(this.isOpen) {
-        return {
-          right: '20.2%',
-        };
+      if(this.isOpen) { 
+        if(window.matchMedia("(max-width: 800px)").matches){
+          return {
+            top: '40% !important',
+          };
+        }else{
+          return {
+            right: '20.2%',
+          };
+        }
+        
       }else {
-        return {
-          right: '0' 
+        if(window.matchMedia("(max-width: 800px)").matches) {
+          return {
+            top: '90% !important'
+          }
+        }else{
+          return {
+            right: '0' 
+          }
         }
       }
     },
@@ -197,5 +232,16 @@ export default defineComponent({
 
 #question{
   width: 2vh;
+}
+
+@media only screen and (max-width: 800px){
+  .ComponentChat {
+    top: 50% !important;
+    width: 100% !important;
+  }
+  .Collapsebtn{
+    right: 50% !important;
+    top: 40% !important;
+  }
 }
 </style>
