@@ -65,15 +65,14 @@ export default defineComponent({
     return {
       isOpen: true,
       imageSource: require('@/assets/collapse.png'),
-      width: document.documentElement.clientWidth,
     }
   },  
   setup() {},
-  mounted(){
-    window.addEventListener('resize', this.onResize)
+  created(){
+    window.addEventListener("resize", this.onResize)
   },
-  unmounted() {
-    window.removeEventListener('resize', this.onResize)
+  destroyed() {
+    window.removeEventListener("resize", this.onResize)
   },
   methods: {
     sendMessage() {
@@ -107,19 +106,20 @@ export default defineComponent({
       this.$emit('collapse', this.isOpen);
     },
     onResize(){
-      if(this.isOpen){
-        if(this.width > 800){
+      if(window.innerWidth > 800){
+        if(this.isOpen){
           document.getElementsByClassName("Collapsebtn").style.right = "20.2%";
         }else{
-          document.getElementsByClassName("Collapsebtn").style.top = "40% !important";
-        }
-      }else {
-        if(this.width > 800){
           document.getElementsByClassName("Collapsebtn").style.top = "0% !important";
+        }
+      }else{
+        if(this.isOpen){
+          document.getElementsByClassName("Collapsebtn").style.top = "40% !important";
         }else{
           document.getElementsByClassName("Collapsebtn").style.right = "90% !important";
         }
       }
+      
     }
   },
   computed : {
@@ -242,6 +242,9 @@ export default defineComponent({
   .Collapsebtn{
     right: 50% !important;
     top: 40% !important;
+  }
+  .Messages {
+    height: 38%;
   }
 }
 </style>
