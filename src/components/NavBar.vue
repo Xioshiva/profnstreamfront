@@ -6,7 +6,7 @@
             <p class="Author">Mr.Pump</p>
         </div>
         <div class="user_information">
-            <p class="Timer"> 4 : 59 </p>
+            <p class="Timer"></p>
             <Icon class="myCoinIcon" icon="fa-solid:coins" />
             <p class="Credit"> 0,00</p>
         </div>
@@ -14,6 +14,57 @@
 </template>
 <script>
 import { Icon } from '@iconify/vue2'
+
+const myHeader = new Headers({
+    'Access-Control-Allow-Origin': 'http://localhost:8080',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+});
+
+
+function toHHMMSS(time) {
+    var sec_num = time; // don't forget the second param
+    var minutes = Math.floor(sec_num / 60);
+    var seconds = time - (minutes * 60);
+
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return minutes+':'+seconds;
+}
+
+function getTime(userID, streamID){
+    return fetch("localhost:8080/time/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            console.log(res);
+            return res.json
+        });
+}
+
+function updateClock(time){
+    document.getElementsByClassName("Timer")[0].innerHTML = toHHMMSS(time);
+}
+
+function userHasCredit(userID){
+    console.log(userID);
+    return false;
+}
+
+getTime("testman", "roomID").then(a=>{
+    console.log(a);
+    var time = a
+    var timerInterval = window.setInterval(function(){
+        time -=1;
+    updateClock(time);
+    if(time <= 0){
+        clearInterval(timerInterval);
+        if(!userHasCredit("testman")){
+            alert("Votre temps d'essai est terminé")
+    }}}, 1000);
+});
+
+
+
+
 
 export default {
     components: {

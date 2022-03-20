@@ -45,7 +45,8 @@ function makeid(length) {
       result += characters.charAt(Math.floor(Math.random() * 
  charactersLength));
    }
-   return result;
+   console.log(result);
+   return "testman";
 }
 var id = makeid(5);
 var roomID = "roomID";
@@ -83,7 +84,7 @@ export default defineComponent({
       document.getElementById("message").value = "";
       if (msg != "") {
         var roomID = "roomID";
-        var userID = id;
+        var userID = "testman";
         if(document.getElementById("question").checked){
           socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 1});
         } else {
