@@ -6,7 +6,7 @@
             <p class="Author">Mr.Pump</p>
         </div>
         <div class="user_information">
-            <p class="Timer"> 4 : 59 </p>
+            <p class="Timer"></p>
             <Icon class="myCoinIcon" icon="fa-solid:coins" />
             <p class="Credit"> 0,00</p>
         </div>
@@ -28,12 +28,21 @@ function toHHMMSS(time) {
 
 function getTime(userID, streamID){
     //fetch
+    fetch("http://localhost:8080/time/"+ streamID +"/" + userID, {method: 'GET'})
+        .then(res=>{
+            return res.json
+        });
     console.log(userID, streamID)
-    return 5*60;
+    return 20;
 }
 
 function updateClock(time){
     document.getElementsByClassName("Timer")[0].innerHTML = toHHMMSS(time);
+}
+
+function userHasCredit(userID){
+    console.log(userID);
+    return false;
 }
 
 var time = getTime("testman", "roomID");
@@ -43,6 +52,9 @@ var timerInterval = window.setInterval(function(){
     updateClock(time);
     if(time <= 0){
         clearInterval(timerInterval);
+        if(!userHasCredit("testman")){
+            alert("Votre temps d'essai est terminé")
+        }
     }
 }, 1000);
 
