@@ -117,7 +117,7 @@ h2 {
 @media only screen and (max-width: 800px){
   .streaming {
     width: 100% !important;
-    height: 50% !important;
+    height: 100% !important;
   }
 }
 </style>
