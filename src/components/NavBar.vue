@@ -60,8 +60,9 @@ getTime("testman", "roomID").then(a=>{
     if(time <= 0){
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
-            alert("Votre temps d'essai est terminé")
-    }}}, 1000);
+            alert("Votre temps d'essai est terminé");
+            location.reload();
+        }
     }
 });
 
