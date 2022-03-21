@@ -57,7 +57,7 @@
           {
             withCredentials: false,
             type: "application/x-mpegURL",
-            src: "http://127.0.0.1:8000/live/test.m3u8"
+            src: "http://127.0.0.1:7002/live/bruh.m3u8"
           }
         ],
         poster: "https://i.ibb.co/4R5J8G6/Dessin-sans-titre-3-1.png",
@@ -67,6 +67,11 @@
     }
     },
     methods: {
+
+      clearSource(){
+        this.sources.src = "";
+      },
+
       onPlayerReadied() {
         if (!this.initialized) {
           this.initialized = true
@@ -74,8 +79,7 @@
         }
       },
       // record current time
-      onTimeupdate(e) {
-        console.log('currentTime', e.cache_.currentTime)
+      onTimeupdate() {
       },
       request() {
         fetch('http://localhost:8091/api')  
@@ -86,7 +90,11 @@
       collapse(e) {
         this.isOpen = e
       }
-    },
+    },  mounted(){
+      const thisInstance = this
+      this.$root.$on('clearSource', function(){
+      thisInstance.clearSource()
+    })},
     computed :{
       CollapseStream() {
         if(this.isOpen) {

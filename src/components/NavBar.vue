@@ -53,7 +53,8 @@ var timerInterval = window.setInterval(function(){
     if(time <= 0){
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
-            alert("Votre temps d'essai est terminé")
+            alert("Votre temps d'essai est terminé");
+            location.reload();
         }
     }
 }, 1000);
