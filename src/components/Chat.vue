@@ -244,17 +244,4 @@ export default defineComponent({
     height: 38%;
   }
 }
-/*@media only screen and (min-width: 801px){
-  .ComponentChat {
-    top: 7%;
-    width: 20.2%;
-  }
-  .Collapsebtn{
-    right: 20.2%;
-    top: 85%;
-  }
-  .Messages {
-    height: 80%;
-  }
-}*/
 </style>
