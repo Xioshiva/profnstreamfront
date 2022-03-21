@@ -8,12 +8,13 @@
         <div class="user_information">
             <p class="Timer"></p>
             <Icon class="myCoinIcon" icon="fa-solid:coins" />
-            <p class="Credit"> 0,00</p>
+            <p class="Credit">1.00</p>
         </div>
     </div> 
 </template>
 <script>
 import { Icon } from '@iconify/vue2'
+import swal from 'sweetalert2'
   
 export default {
     components: {
@@ -39,7 +40,51 @@ function toHHMMSS(time) {
 }
 
 async function getTime(userID, streamID){
-    console.log("heyyyyyyyyyyyyyyyyyy")
+    console.log("heyyyyyyyyyyyyyyyyyy");
+    swal.fire({
+        title: 'PERIODE GRATUITE TERMINEE',
+        text: "Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
+        icon: "warning",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonColor: '#993bbb',
+        confirmButtonText: 'Continuer',
+        denyButtonText: `Quitter`,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var a = 2
+            if(a == 1){ // tester si le user a assez de crédit et si c'est le cas, on le débit
+                swal.fire({
+                    icon: 'success',
+                    title: 'Merci',
+                    text: 'Vous avez été débité de 1 crédit',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+            } else {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Echec',
+                    text: 'Vous n\'avez pas assez de crédit pour continuer le cours',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+                // rediriger vers la page d'accueil
+            }
+        } else if (result.isDenied) {
+            // rediriger vers la page d'accueil
+        }
+    })
+    /*swal({
+        title: "PERIODE GRATUITE TERMINEE",
+                text: "Vos 5 minutes de visionnage gratuites sont terminées\n Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
+                icon: "warning",
+                dangerMode: true,
+            }).then(willDelete => {
+                if (willDelete) {
+                    swal("MERCI", "Vous avez été débité de 1 crédit !", "continuer");
+                }
+            });*/
     return fetch("http://localhost:8080/timer/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
         .then(res=>{
             return res.json().then(o=>o["timer"])
@@ -68,12 +113,22 @@ getTime("testman", "roomID").then(a=>{
     }else{
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
-            alert("Votre temps d'essai est terminé");
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure that you want to leave this page?",
+                icon: "warning",
+                dangerMode: true,
+            }).then(willDelete => {
+                if (willDelete) {
+                    swal("Deleted!", "Your imaginary file has been deleted!", "success");
+                }
+            });
+            //alert("Votre temps d'essai est terminé");
             location.reload();
         }
     }
 });
-    
+
 </script>
 
 <style>
