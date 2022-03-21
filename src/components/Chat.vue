@@ -131,9 +131,9 @@ export default defineComponent({
   computed : {
     CollapseMovmChat() {
       if(this.isOpen) { 
-        if(this.winWidth < 800){
+        if(this.winWidth < 810){
           return {
-            top: '40%',
+            top: '28%',
             right: '50%',
           };
         }else{
@@ -144,9 +144,9 @@ export default defineComponent({
         }
         
       }else {
-        if(this.winWidth < 800) {
+        if(this.winWidth < 810) {
           return {
-            top: '90%',
+            top: '94%',
             right: '50%'
           }
         }else{
@@ -169,7 +169,7 @@ export default defineComponent({
   top: 85%;
   position: fixed;
   height: 10%;
-  width: 3%;
+  width: 2%;
   z-index: 1;
 }
 
@@ -235,7 +235,7 @@ export default defineComponent({
 
 .btn_send{
   padding-top: 2vh;
-  padding-left: 1vh;
+  padding-left: 3vh;
   width: 4vh;
   height: 4vh;
 }
@@ -244,17 +244,20 @@ export default defineComponent({
   width: 2vh;
 }
 
-@media only screen and (max-width: 800px){
+@media only screen and (max-width: 810px){
   .ComponentChat {
-    top: 50%;
+    top: 35%;
     width: 100%;
   }
   .Collapsebtn{
-    right: 50%;
-    top: 40%;
+    transform: rotate(90deg);
+    width: 7%
   }
   .Messages {
-    height: 38%;
+    height: 54%;
+  }
+  .btn_send {
+    padding-left: 6vh;
   }
 }
 </style>
