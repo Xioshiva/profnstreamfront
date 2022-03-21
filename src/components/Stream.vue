@@ -81,12 +81,6 @@
       // record current time
       onTimeupdate() {
       },
-      request() {
-        fetch('http://localhost:8091/api')  
-          .then(response => response.json())
-          .then(data => console.log(data));
-        console.log("hey");
-      },
       collapse(e) {
         this.isOpen = e
       }
