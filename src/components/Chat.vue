@@ -75,15 +75,21 @@ export default defineComponent({
     return {
       isOpen: true,
       imageSource: require('@/assets/collapse.png'),
+      winWidth : 0
     }
   },  
-  setup() {},
-  created(){
-    window.addEventListener("resize", this.onResize)
+  mounted() {
+    this.winWidth = window.innerWidth;
+    var test;
+    window.onresize = () => {
+      clearTimeout(test);
+      test = setTimeout(this.resizeWidth, 1);
+    }
   },
   destroyed() {
-    window.removeEventListener("resize", this.onResize)
-  },
+    window.onresize = null
+  }
+  ,
   methods: {
     sendMessage() {
       var msg = document.getElementById("message").value;
@@ -118,44 +124,35 @@ export default defineComponent({
       }
       this.$emit('collapse', this.isOpen);
     },
-    onResize(){
-      if(window.innerWidth > 800){
-        if(this.isOpen){
-          document.getElementsByClassName("Collapsebtn").style.right = "20.2%";
-        }else{
-          document.getElementsByClassName("Collapsebtn").style.top = "0% !important";
-        }
-      }else{
-        if(this.isOpen){
-          document.getElementsByClassName("Collapsebtn").style.top = "40% !important";
-        }else{
-          document.getElementsByClassName("Collapsebtn").style.right = "90% !important";
-        }
-      }
-      
+    resizeWidth() {
+      this.winWidth = window.innerWidth;
     }
   },
   computed : {
     CollapseMovmChat() {
       if(this.isOpen) { 
-        if(window.matchMedia("(max-width: 800px)").matches){
+        if(this.winWidth < 810){
           return {
-            top: '40% !important',
+            top: '28%',
+            right: '50%',
           };
         }else{
           return {
+            top: '85%',
             right: '20.2%',
           };
         }
         
       }else {
-        if(window.matchMedia("(max-width: 800px)").matches) {
+        if(this.winWidth < 810) {
           return {
-            top: '90% !important'
+            top: '94%',
+            right: '50%'
           }
         }else{
           return {
-            right: '0' 
+            top: '85%',
+            right: '0%' 
           }
         }
       }
@@ -172,7 +169,7 @@ export default defineComponent({
   top: 85%;
   position: fixed;
   height: 10%;
-  width: 3%;
+  width: 2%;
   z-index: 1;
 }
 
@@ -238,7 +235,7 @@ export default defineComponent({
 
 .btn_send{
   padding-top: 2vh;
-  padding-left: 1vh;
+  padding-left: 3vh;
   width: 4vh;
   height: 4vh;
 }
@@ -247,17 +244,20 @@ export default defineComponent({
   width: 2vh;
 }
 
-@media only screen and (max-width: 800px){
+@media only screen and (max-width: 810px){
   .ComponentChat {
-    top: 50% !important;
-    width: 100% !important;
+    top: 35%;
+    width: 100%;
   }
   .Collapsebtn{
-    right: 50% !important;
-    top: 40% !important;
+    transform: rotate(90deg);
+    width: 7%
   }
   .Messages {
-    height: 38%;
+    height: 54%;
+  }
+  .btn_send {
+    padding-left: 6vh;
   }
 }
 </style>

@@ -2,7 +2,7 @@
     <div class="top_navbar">
         <div class="class_information">
             <p class="Title">Introduction à l'électrodynamique</p>
-            <p> par </p>
+            <p class="par"> par </p>
             <p class="Author">Mr.Pump</p>
         </div>
         <div class="user_information">
@@ -187,5 +187,35 @@ p {
     margin: auto;
     padding: 1vh 2vh 0vh 1vh;
     font-size: 3vh;
+}
+
+@media only screen and (max-width: 810px){
+    .top_navbar {
+        display: inline-block;
+    }
+    .class_information .Title {
+        font-size: 2vh;
+    }
+    .class_information .par {
+        font-size: 1vh;
+    }
+    .class_information .Author {  
+        font-size: 1vh;
+    }
+    .user_information .Timer {
+        margin: 0vh 1vh 0vh 8vh;
+        font-size: 2vh;
+    }
+    .user_information .Credit {
+        padding: 0vh 0vh 0vh 0vh;
+        margin: 0vh 0vh 0vh 1vh;
+        font-size: 3vh;
+    }
+    .myCoinIcon {
+        margin: 0vh 0vh 0vh 12vh;
+        padding: 0vh 0vh 0vh 0vh;
+        font-size: 3vh;
+    }
+    
 }
 </style>
