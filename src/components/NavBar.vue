@@ -15,6 +15,12 @@
 <script>
 import { Icon } from '@iconify/vue2'
   
+export default {
+    components: {
+        Icon,
+    },
+}
+
 const myHeader = new Headers({
     'Access-Control-Allow-Origin': 'http://localhost:8080',
     'Accept': 'application/json',
@@ -54,10 +60,12 @@ getTime("testman", "roomID").then(a=>{
     var time = Math.floor(Math.max(a,0)/1000)
     updateClock(Math.floor(time));
     if(time > 0){
-    var timerInterval = window.setInterval(function(){
-        time -=1;
-    updateClock(Math.floor(time));
-    if(time <= 0){
+        var timerInterval = 
+            window.setInterval(function(){
+                time -=1;
+                updateClock(Math.floor(time));
+        })   
+    }else{
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
             alert("Votre temps d'essai est terminé");
@@ -65,16 +73,7 @@ getTime("testman", "roomID").then(a=>{
         }
     }
 });
-
-
-
-
-
-export default {
-    components: {
-        Icon,
-    },
-}
+    
 </script>
 
 <style>
