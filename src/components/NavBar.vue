@@ -64,7 +64,7 @@ getTime("testman", "roomID").then(a=>{
             window.setInterval(function(){
                 time -=1;
                 updateClock(Math.floor(time));
-        })   
+        }, 1000);   
     }else{
         clearInterval(timerInterval);
         if(!userHasCredit("testman")){
