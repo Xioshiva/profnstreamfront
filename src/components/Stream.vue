@@ -55,10 +55,9 @@
         notSupportedMessage: " This video is temporarily unplayable. Please try again later ",
 
       }
-    }
+      }
     },
     methods: {
-
       clearSource(){
         this.sources.src = "";
       },
@@ -75,11 +74,13 @@
       collapse(e) {
         this.isOpen = e
       }
-    },  mounted(){
+    },
+    mounted(){
       const thisInstance = this
-      this.$root.$on('clearSource', function(){
-      thisInstance.clearSource()
-    })},
+      this.$root.$on('clearSourceEvent', () => {
+        thisInstance.clearSource()
+      })
+    },
     computed :{
       CollapseStream() {
         if(this.isOpen) {

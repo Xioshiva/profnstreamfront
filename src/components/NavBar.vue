@@ -15,6 +15,7 @@
 <script>
 import { Icon } from '@iconify/vue2'
 import swal from 'sweetalert2'
+//import Stream from './Stream.vue'
   
 export default {
     components: {
@@ -104,10 +105,13 @@ getTime("testman", "roomID").then(a=>{
                             allowOutsideClick: false,
                             timer: 2000
                         })
-                        // rediriger vers la page d'accueil
                     }
+                    this.$root.$emit('clearSourceEvent')
+                    this.$router.push('acceuil')
                 } else if (result.isDenied) {
                     // rediriger vers la page d'accueil
+                    this.$root.$emit('clearSourceEvent')
+                    this.$router.push('acceuil')
                 }
             })
             //location.reload();
