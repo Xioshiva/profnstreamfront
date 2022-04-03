@@ -9,6 +9,8 @@
             <p class="Timer"></p>
             <Icon class="myCoinIcon" icon="fa-solid:coins" />
             <p id="credit"></p>
+            <p id="name"></p>
+            <Icon class="myProfilIcon" icon="fa-solid:coins" />
         </div>
     </div> 
 </template>
@@ -30,6 +32,10 @@ const myHeader = new Headers({
     'Content-Type': 'application/json'
 });
 
+const user = "testman"
+const idUser = 10;
+const idStream = 1;
+var credits = 0;
 
 function toHHMMSS(time) {
     var sec_num = time; // don't forget the second param
@@ -49,25 +55,35 @@ async function getTime(userID, streamID){
 }
 
 async function debitUser(userID, streamID){
-    return fetch("http://localhost:8080/payment/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+    return fetch("http://localhost:8080/payment/debit/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
         .then(res=>{
             return res.json().then(o=>o["credits"])
         });
 }
 
-var credits = 7;
+async function getUserCredits(userID){
+    return fetch("http://localhost:8080/payment/credits/"+ userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            return res.json().then(o=>o["credits"])
+        });
+}
+
+async function checkIfUserPaid(userID, streamID){
+    return fetch("http://localhost:8080/payment/check/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            return res.json().then(o=>o["credits"])
+        });
+}
 
 function updateClock(time){
-    document.getElementById("credit").textContent = credits;
+    // --- Ne devrait pas aller là mais flemme pour l'instant
+    document.getElementById("name").textContent = user;
+    getUserCredits(idUser).then(res => document.getElementById("credit").textContent = res);
+    // ---
     document.getElementsByClassName("Timer")[0].innerHTML = toHHMMSS(time);
 }
 
-function userHasCredit(userID){
-    console.log(userID);
-    return false;
-}
-
-getTime("testman", "roomID").then(a=>{
+getTime(user, "roomID").then(a=>{
     console.log("getTime Res:"  + a);
     var time = Math.floor(Math.max(a,0)/1000)
     updateClock(Math.floor(time));
@@ -77,55 +93,57 @@ getTime("testman", "roomID").then(a=>{
                 time -=1;
                 updateClock(Math.floor(time));
         }, 1000);   
-    }else{
-        clearInterval(timerInterval);
-        if(!userHasCredit("testman")){
-            swal.fire({
-                title: 'Periode gratuite terminée',
-                text: "Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
-                icon: "warning",
-                showDenyButton: true,
-                showCancelButton: false,
-                confirmButtonColor: '#993bbb',
-                confirmButtonText: 'Continuer',
-                denyButtonText: `Quitter`,
-                allowOutsideClick: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    debitUser(2, 1).then(res => {
-                    credits = res;
-                    if(credits >= 0){ // tester si le user a assez de crédit et si c'est le cas, on le débit
-                        swal.fire({
-                            icon: 'success',
-                            title: 'Merci',
-                            text: 'Vous avez été débité de 1 crédit',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                            timer: 2000
-                        })
-                        document.getElementById("credit").textContent = credits;
-                    } else {
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Echec',
-                            text: 'Vous n\'avez pas assez de crédit pour continuer le cours',
-                            showConfirmButton: false,
-                            allowOutsideClick: false,
-                            timer: 2000
-                        })
+    }else {
+        checkIfUserPaid(idUser, idStream).then(res => {
+            if(!res){
+                clearInterval(timerInterval);
+                swal.fire({
+                    title: 'Periode gratuite terminée',
+                    text: "Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
+                    icon: "warning",
+                    showDenyButton: true,
+                    showCancelButton: false,
+                    confirmButtonColor: '#993bbb',
+                    confirmButtonText: 'Continuer',
+                    denyButtonText: `Quitter`,
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        debitUser(idUser, idStream).then(res => {
+                        credits = res;
+                        if(credits >= 0){ // tester si le user a assez de crédit et si c'est le cas, on le débit
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Merci',
+                                text: 'Vous avez été débité de 1 crédit',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                timer: 2000
+                            })
+                            document.getElementById("credit").textContent = credits;
+                        } else {
+                            swal.fire({
+                                icon: 'error',
+                                title: 'Echec',
+                                text: 'Vous n\'avez pas assez de crédit pour continuer le cours',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                timer: 2000
+                            })
+                            // rediriger vers la page d'accueil
+                        }
+                        this.$root.$emit('clearSourceEvent')
+                        this.$router.push('acceuil')
+                        });
+                    } else if (result.isDenied) {
                         // rediriger vers la page d'accueil
+                        this.$root.$emit('clearSourceEvent')
+                        this.$router.push('acceuil')
                     }
-                    this.$root.$emit('clearSourceEvent')
-                    this.$router.push('acceuil')
-                    });
-                } else if (result.isDenied) {
-                    // rediriger vers la page d'accueil
-                    this.$root.$emit('clearSourceEvent')
-                    this.$router.push('acceuil')
-                }
-            })
-            //location.reload();
-        }
+                })
+                //location.reload();
+            }
+        });
     }
 });
 
@@ -197,9 +215,21 @@ p {
     font-size: 3vh;
 }
 
+.myProfilIcon {
+    margin: auto;
+    padding: 1vh 1vh 1vh 2vh;
+    font-size: 3vh;
+}
+
 .user_information #credit {
     margin: auto;
     padding: 1vh 2vh 0vh 1vh;
+    font-size: 3vh;
+}
+
+.user_information #name {
+    margin: auto;
+    padding: 1vh 0vh 0vh 1vh;
     font-size: 3vh;
 }
 
@@ -230,6 +260,10 @@ p {
         padding: 0vh 0vh 0vh 0vh;
         font-size: 3vh;
     }
-    
+    .myProfilIcon {
+        margin: 0vh 0vh 0vh 2vh;
+        padding: 0vh 0vh 0vh 0vh;
+        font-size: 3vh;
+    }
 }
 </style>
