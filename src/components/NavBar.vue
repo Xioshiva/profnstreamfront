@@ -15,6 +15,7 @@
 <script>
 import { Icon } from '@iconify/vue2'
 import swal from 'sweetalert2'
+//import Stream from './Stream.vue'
   
 export default {
     components: {
@@ -92,31 +93,35 @@ getTime("testman", "roomID").then(a=>{
             }).then((result) => {
                 if (result.isConfirmed) {
                     debitUser(2, 1).then(res => {
-                        credits = res;
-                        if(credits >= 0){ // tester si le user a assez de crédit et si c'est le cas, on le débit
-                            swal.fire({
-                                icon: 'success',
-                                title: 'Merci',
-                                text: 'Vous avez été débité de 1 crédit',
-                                showConfirmButton: false,
-                                allowOutsideClick: false,
-                                timer: 2000
-                            })
-                            document.getElementById("credit").textContent = credits;
-                        } else {
-                            swal.fire({
-                                icon: 'error',
-                                title: 'Echec',
-                                text: 'Vous n\'avez pas assez de crédit pour continuer le cours',
-                                showConfirmButton: false,
-                                allowOutsideClick: false,
-                                timer: 2000
-                            })
-                            // rediriger vers la page d'accueil
-                        }
+                    credits = res;
+                    if(credits >= 0){ // tester si le user a assez de crédit et si c'est le cas, on le débit
+                        swal.fire({
+                            icon: 'success',
+                            title: 'Merci',
+                            text: 'Vous avez été débité de 1 crédit',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            timer: 2000
+                        })
+                        document.getElementById("credit").textContent = credits;
+                    } else {
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Echec',
+                            text: 'Vous n\'avez pas assez de crédit pour continuer le cours',
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            timer: 2000
+                        })
+                        // rediriger vers la page d'accueil
+                    }
+                    this.$root.$emit('clearSourceEvent')
+                    this.$router.push('acceuil')
                     });
                 } else if (result.isDenied) {
                     // rediriger vers la page d'accueil
+                    this.$root.$emit('clearSourceEvent')
+                    this.$router.push('acceuil')
                 }
             })
             //location.reload();
