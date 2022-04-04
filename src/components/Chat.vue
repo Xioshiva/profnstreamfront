@@ -55,21 +55,13 @@ socket.on("recieve message", (args) => {
   console.log("Recieved!");
   if(args["question"] == 1){
     document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div> \
-      <button class=\"myButton\" onclick=\"lol()\"> \
-        <p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + args["userID"] + ": " + "</p> \
-      </button>" +
-      "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p> \
-    </div>" + 
+    "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
+    "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
     document.getElementsByClassName("Messages")[0].innerHTML;  
   } else {
     document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div> \
-      <button class=\"myButton\" onclick=\"lol()\"> \
-        <p style=\"font-weight:bolder;\" class=\"kek\">" + args["userID"] + ": " + "</p> \
-      </button>" +
-      "<p style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p> \
-    </div>" + 
+    "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
+    "<p style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
     document.getElementsByClassName("Messages")[0].innerHTML;
   }
 });
@@ -96,11 +88,9 @@ export default defineComponent({
   },
   destroyed() {
     window.onresize = null
-  },
+  }
+  ,
   methods: {
-    lol(){
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-    },
     sendMessage() {
       var msg = document.getElementById("message").value;
       document.getElementById("message").value = "";
@@ -114,21 +104,13 @@ export default defineComponent({
         }
         if(document.getElementById("question").checked){
           document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div> \
-            <button class=\"myButton\" onclick=\"lol()\"> \
-              <p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</p> \
-            </button>" +
-            "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</p> \
-          </div>" + 
+          "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</p>" +
+          "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
           document.getElementsByClassName("Messages")[0].innerHTML;
         }else {
           document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div> \
-            <button class=\"myButton\" onclick=\"lol()\"> \
-              <p style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</p> \
-            </button>" +
-            "<p style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</p> \
-          </div>" + 
+          "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</p>" +
+          "<p style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
           document.getElementsByClassName("Messages")[0].innerHTML;
         }
       }
@@ -278,15 +260,4 @@ export default defineComponent({
     padding-left: 6vh;
   }
 }
-
-.myButton {
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
-}
-
 </style>

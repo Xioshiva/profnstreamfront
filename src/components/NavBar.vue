@@ -32,7 +32,7 @@ const myHeader = new Headers({
     'Content-Type': 'application/json'
 });
 
-const user = "testman"
+const user = "testman" //(Math.random() + 1).toString(36).substring(7)
 const idUser = 10;
 const idStream = 1;
 var credits = 0;
@@ -82,6 +82,19 @@ async function checkIfUserPaid(userID, streamID){
         });
 }*/
 // EXEMPLE checkIfUserIsProf(11).then(res => console.log("--> " + res));
+
+/*async function banUser(userID, streamID){
+    return fetch("http://localhost:8080/banned/add/" + streamID + "/" + userID,{ method: 'get', headers: myHeader})
+}*/
+// EXEMPLE banUser(1, 11);
+
+/*async function checkIfUserBanned(userID, streamID){
+    return fetch("http://localhost:8080/banned/check/" + streamID + "/" + userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            return res.json().then(o=>o["result"])
+        });
+}*/
+// EXEMPLE checkIfUserBanned(1, 11).then(res => console.log("--> " + res));
 
 function updateClock(time){
     // --- Ne devrait pas aller là mais flemme pour l'instant
