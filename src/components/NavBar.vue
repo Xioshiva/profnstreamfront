@@ -75,6 +75,14 @@ async function checkIfUserPaid(userID, streamID){
         });
 }
 
+/*async function checkIfUserIsProf(userID){
+    return fetch("http://localhost:8080/credential/" + userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            return res.json().then(o=>o["credential"])
+        });
+}*/
+// EXEMPLE checkIfUserIsProf(11).then(res => console.log("--> " + res));
+
 function updateClock(time){
     // --- Ne devrait pas aller là mais flemme pour l'instant
     document.getElementById("name").textContent = user;
