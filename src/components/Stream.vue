@@ -15,9 +15,47 @@
   import videojs from 'video.js'
   import Chat from './Chat.vue'
 
+  const BACKEND_URL ="http://127.0.0.1:8080";
+  const myHeader = new Headers({
+    'Access-Control-Allow-Origin': 'http://localhost:8080',
+    //'Access-Control-Allow-Origin': 'http://localhost:8081',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  });
+
+async function getStreamUrl(){
+  let url = window.location.href;
+  let arr = url.split("/");
+  let profID = arr[arr.length - 1];
+  
+   return fetch(BACKEND_URL+ "/stream/get/"+ profID + "/userName",{ method: 'get', headers: myHeader})
+      .then(res=>{
+          return res.json().then(o=>{
+            return o["url"];
+          })
+      });
+}
+
+
+  getStreamUrl().then( a=>{
+    console.log("OOOOOOOOOOOOOH")
+    var streamSource = a;                                                                                                                                                                                                                                                               
+    console.log(streamSource)
+    this.sources.src = a;
+  })
+
+
   window.videojs = videojs
   // hls plugin for videojs6
   /*require('videojs-contrib-hls/dist/videojs-contrib-hls.js') cette ligne casse le programme*/
+
+
+
+
+
+
+
+
 
   export default {
   components: { Chat },
@@ -43,12 +81,12 @@
         muted: true,
         language: 'en',
         flash: { hls: { withCredentials: false }},
-        html5: { hls: { withCredentials: false }},
+        html5: { hls: { withCredentials: false }}, 
         sources: [
           {
             withCredentials: false,
             type: "application/x-mpegURL",
-            src: "http://127.0.0.1:7002/live/bruh.m3u8"
+            src: "",
           }
         ],
         poster: "https://i.ibb.co/4R5J8G6/Dessin-sans-titre-3-1.png",
@@ -58,7 +96,6 @@
     }
     },
     methods: {
-
       clearSource(){
         this.sources.src = "";
       },
@@ -92,8 +129,9 @@
           }
         }
       }
-    }
+    },
   }
+  
 </script>
 
 <style scoped>
