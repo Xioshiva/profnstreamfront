@@ -73,8 +73,9 @@
         let url = window.location.href;
         let arr = url.split("/");
         let profID = arr[arr.length - 1];
-        return fetch(BACKEND_URL+ "/stream/get/"+ profID + "/userName",{ method: 'get', headers: myHeader})
+        return fetch(BACKEND_URL+ "/stream/get/"+ profID + "/userName",{ method: 'GET', headers: myHeader})
         .then(res=>{
+
           return res.json().then(o=>{
           return o["url"];
           })
@@ -106,10 +107,10 @@
         console.log("OOOOOOOOOOOOOH")
         var streamSource = a;                                                                                                                                                                                                                                                               
         console.log(streamSource)
-        this.sources.src = "http://localhost:7002/live/bruh.m3u8";
+        this.playerOptions.sources[0].src = a;
         this.$forceUpdate();
       });
-      this.playerOptions.sources[0].src = "http://localhost:7002/live/bruh.m3u8";
+      //this.playerOptions.sources[0].src = "http://localhost:7002/live/bruh.m3u8";
     },
     computed :{
       CollapseStream() {
