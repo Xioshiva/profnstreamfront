@@ -29,7 +29,10 @@ import { CollapseTransition } from "@ivanv/vue-collapse-transition"
 import { defineComponent } from "@vue/composition-api";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000", {
+const BACKEND_ADDR = process.env.BACKEND_ADDR;
+
+
+const socket = io(BACKEND_ADDR+":3000", {
   origin: "*",
   extraHeaders: {
     "my-custom-header": "abcd",

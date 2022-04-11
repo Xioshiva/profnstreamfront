@@ -21,6 +21,7 @@ export default {
         Icon,
     },
 }
+const BACKEND_ADDR = process.env.BACKEND_ADDR;
 
 const myHeader = new Headers({
     'Access-Control-Allow-Origin': 'http://localhost:8080',
@@ -41,14 +42,14 @@ function toHHMMSS(time) {
 }
 
 async function getTime(userID, streamID){
-    return fetch("http://localhost:8080/timer/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+    return fetch(BACKEND_ADDR + ":8080/timer/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
         .then(res=>{
             return res.json().then(o=>o["timer"])
         });
 }
 
 async function debitUser(userID, streamID){
-    return fetch("http://localhost:8080/payment/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
+    return fetch(BACKEND_ADDR + ":8080/payment/"+ streamID +"/" + userID,{ method: 'get', headers: myHeader})
         .then(res=>{
             return res.json().then(o=>o["credits"])
         });
