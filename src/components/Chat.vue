@@ -72,7 +72,7 @@ export default defineComponent({
   },
   methods: {
     initSockets() {
-      this.socket = Vue.prototype.$io("http://localhost:3000", {
+      this.socket = Vue.prototype.$io("http://" + Vue.prototype.$BACKENDURL +":3000", {
         origin: "*",
         extraHeaders: {
           "my-custom-header": "abcd",

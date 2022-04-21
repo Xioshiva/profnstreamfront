@@ -10,6 +10,10 @@ Vue.prototype.$userID = prompt("prompt", "textbox's intial text");
 Vue.prototype.$io = io;
 Vue.prototype.$roomID = location.href.substring(location.href.lastIndexOf('/')+1);
 
+
+Vue.prototype.$BACKENDURL = "localhost";
+
+
 new Vue({
   render: h => h(App),
 }).$mount('#app')
