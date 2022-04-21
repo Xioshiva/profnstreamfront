@@ -22,12 +22,11 @@
   </div>
 </template>
 
-
-
 <script>
 import { CollapseTransition } from "@ivanv/vue-collapse-transition"
 import { defineComponent } from "@vue/composition-api";
 import { io } from "socket.io-client";
+import swal from 'sweetalert2'
 
 const socket = io("http://localhost:3000", {
   origin: "*",
@@ -37,35 +36,122 @@ const socket = io("http://localhost:3000", {
 });
 socket.on("connect", () => {});
 
+const myHeader = new Headers({
+    'Access-Control-Allow-Origin': 'http://localhost:8080',
+    //'Access-Control-Allow-Origin': 'http://localhost:8081',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+});
+
+var userID = makeid(5);
+var array = [ makeid(5), makeid(5), makeid(5)];
+var roomID = "roomID";
+
+function lol(userID, streamID){
+  console.log("hello");
+
+  console.log("current userID = " + userID);
+  var newProfUserID = 11;
+  console.log("new userID = " + newProfUserID);
+ 
+  var userToBan = 2;
+  console.log("new userID to ban = " + userToBan);
+  
+  var newStreamID = 0;
+  console.log("current streamID = " + streamID);
+  console.log("new streamID = " + newStreamID);
+
+  checkIfUserIsProf(newProfUserID).then(res => {
+    if(res){
+      swal.fire({
+      position: 'center-end',
+      target: document.getElementsByClassName("Messages"),
+      width: document.getElementsByClassName("Messages")[0].clientWidth,
+      text: "Que souhaitez-vous faire ?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonColor: '#ff0000',
+      denyButtonColor: '#993bbb',
+      confirmButtonText: 'Bannir l\'utilisateur',
+      denyButtonText: `Supprimer le message`,
+      allowOutsideClick: false
+    }).then((result) => {
+          if (result.isConfirmed) {
+            banUser(newStreamID, userToBan).then( res => {
+              if(res == 200){
+                swal.fire({
+                  position: 'center-end',
+                  target: document.getElementsByClassName("Messages"),
+                  width: document.getElementsByClassName("Messages")[0].clientWidth,
+                  text: 'Utilisateur banni!'
+                })
+              }
+            });
+          } else if (result.isDenied) {
+              swal.fire({
+                position: 'center-end',
+                target: document.getElementsByClassName("Messages"),
+                width: document.getElementsByClassName("Messages")[0].clientWidth,
+                text: 'Message supprimé'
+              })
+            }
+      });
+    }
+  });
+}
+
+window.lol = lol;
+
+async function checkIfUserIsProf(userID){
+    return fetch("http://localhost:8080/credential/" + userID,{ method: 'get', headers: myHeader})
+        .then(res=>{
+            return res.json().then(o=>o["credential"])
+        });
+}
+
+async function banUser(streamID, userID){
+    return fetch("http://localhost:8080/banned/add/" + streamID, + "/" + userID,{ method: 'get', headers: myHeader})
+      .then(res=>{
+            return res.status
+        });
+}
+
 function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
     for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   console.log(result);
-   return "testman";
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    console.log(result);
+    return result;
 }
-var id = makeid(5);
-var roomID = "roomID";
-socket.emit("init", {roomID: roomID, userID: id});
+
+socket.emit("init", {roomID: roomID, userID: userID});
 socket.on("recieve message", (args) => {
   console.log("Recieved!");
   if(args["question"] == 1){
+    console.log("Bonjour 1 " + userID + " - " + roomID);
     document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
-    "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
+    "<div> \
+      <button onclick=\"lol(userID, roomID)\"> \
+        <p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + array[Math.floor(Math.random() * 3)] + ": " + "</p> \
+        <p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p> \
+      </button> \
+    </div>" + 
     document.getElementsByClassName("Messages")[0].innerHTML;  
   } else {
+    console.log("Bonjour 2 " + userID + " - " + roomID);
     document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
-    "<p style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
+    "<div> \
+      <button onclick=\"lol(userID, roomID)\"> \
+        <p style=\"font-weight:bolder;\" class=\"kek\">" + array[Math.floor(Math.random() * 3)] + ": " + "</p> \
+        <p style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p> \
+      </button> \
+    </div>" + 
     document.getElementsByClassName("Messages")[0].innerHTML;
   }
 });
-
 
 export default defineComponent({
   components: {
@@ -88,29 +174,37 @@ export default defineComponent({
   },
   destroyed() {
     window.onresize = null
-  }
-  ,
+  },
   methods: {
     sendMessage() {
       var msg = document.getElementById("message").value;
       document.getElementById("message").value = "";
       if (msg != "") {
-        var roomID = "roomID";
-        var userID = "testman";
         if(document.getElementById("question").checked){
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 1});
+          socket.emit("chat message", { msg: msg, roomID: "roomID", userID: "testman", question: 1});
         } else {
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 0});
+          socket.emit("chat message", { msg: msg, roomID: "roomID", userID: "testman", question: 0});
         }
+
         if(document.getElementById("question").checked){
+          console.log("Bonjour 3 " + userID + " - " + roomID);
           document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</p>" +
-          "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
+          "<div> \
+            <button onclick=\"lol( + userID + ,  + roomID + )\" style=\"padding: 0; border: none; background: none;\"> \
+              <span style=\"font-weight:bolder;color:red;\" class=\"kek\">" + array[Math.floor(Math.random() * 3)] + ": " + "</span>" +
+              "<span style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</span> \
+            </button>" +
+          "</div>" + 
           document.getElementsByClassName("Messages")[0].innerHTML;
         }else {
+          console.log("Bonjour 4 " + userID + " - " + roomID);
           document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</p>" +
-          "<p style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
+          "<div> \
+            <button onclick=\"lol(userID, roomID)\" style=\"padding: 0; border: none; background: none;\"> \
+              <span style=\"font-weight:bolder;\" class=\"kek\">" + array[Math.floor(Math.random() * 3)] + ": " + "</span>" +
+              "<span style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</span> \
+            </button>" +
+          "</div>" + 
           document.getElementsByClassName("Messages")[0].innerHTML;
         }
       }
@@ -260,4 +354,5 @@ export default defineComponent({
     padding-left: 6vh;
   }
 }
+
 </style>

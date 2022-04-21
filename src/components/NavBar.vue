@@ -98,7 +98,7 @@ async function checkIfUserPaid(userID, streamID){
 
 function updateClock(time){
     // --- Ne devrait pas aller là mais flemme pour l'instant
-    document.getElementById("name").textContent = user;
+    document.getElementById("name").textContent = "thomas";
     getUserCredits(idUser).then(res => document.getElementById("credit").textContent = res);
     // ---
     document.getElementsByClassName("Timer")[0].innerHTML = toHHMMSS(time);
