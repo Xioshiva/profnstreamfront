@@ -1,23 +1,36 @@
 <template>
   <div>
-    <img :src="imageSource" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="collapse"/>    
+    <img
+      :src="imageSource"
+      width="40"
+      height="120"
+      :style="CollapseMovmChat"
+      class="Collapsebtn"
+      v-on:click="collapse"
+    />
     <collapse-transition dimension="width" :duration="0">
-    <div class="ComponentChat" v-show="isOpen">
-      <div class="Messages"></div>
-      <div class="submitMessage">
-        <textarea
-          id="message"
-          type="text" 
-          @keypress.enter="sendMessage()"
-          v-model="text"
-          placeholder="Écrivez votre message..."
-        />
-        <img src="../assets/btn_send.png" width="40" height="40" class="btn_send" v-on:click="sendMessage()" />
-        <input type="checkbox" id="question" name="subscribe">
-        <label for="subscribeNews">question</label>
+      <div class="ComponentChat" v-show="isOpen">
+        <div class="Messages"></div>
+        <div class="submitMessage">
+          <textarea
+            id="message"
+            type="text"
+            @keypress.enter="sendMessage()"
+            v-model="text"
+            placeholder="Écrivez votre message..."
+          />
+          <img
+            src="../assets/btn_send.png"
+            width="40"
+            height="40"
+            class="btn_send"
+            v-on:click="sendMessage()"
+          />
+          <input type="checkbox" id="question" name="subscribe" />
+          <label for="subscribeNews">question</label>
+        </div>
+        <label>{{ checked }}</label>
       </div>
-      <label>{{ checked }}</label>
-    </div>
     </collapse-transition>
   </div>
 </template>
@@ -25,144 +38,158 @@
 
 
 <script>
-import { CollapseTransition } from "@ivanv/vue-collapse-transition"
+import { CollapseTransition } from "@ivanv/vue-collapse-transition";
 import { defineComponent } from "@vue/composition-api";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000", {
-  origin: "*",
-  extraHeaders: {
-    "my-custom-header": "abcd",
-  },
-});
-socket.on("connect", () => {});
-
-function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   console.log(result);
-   return "testman";
-}
-var id = makeid(5);
-var roomID = "roomID";
-socket.emit("init", {roomID: roomID, userID: id});
-socket.on("recieve message", (args) => {
-  console.log("Recieved!");
-  if(args["question"] == 1){
-    document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><span style=\"font-weight:bolder;color:red;\" class=\"kek\">" + args["userID"] + ": " + "</span>" +
-    "<span style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</span></div>" + 
-    document.getElementsByClassName("Messages")[0].innerHTML;  
-  } else {
-    document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><span style=\"font-weight:bolder;\" class=\"kek\">" + args["userID"] + ": " + "</span>" +
-    "<span style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</span></div>" + 
-    document.getElementsByClassName("Messages")[0].innerHTML;
-  }
-});
-
+import Vue from "vue";
 
 export default defineComponent({
   components: {
+    mixins: [Vue, Vue.prototype.$io, CollapseTransition],
     CollapseTransition,
   },
   data() {
     return {
+      socket: null,
       isOpen: true,
-      imageSource: require('@/assets/collapse.png'),
-      winWidth : 0
-    }
-  },  
+      imageSource: require("@/assets/collapse.png"),
+      winWidth: 0,
+    };
+  },
+  beforeMount() {
+    this.initSockets();
+    console.log("Hey initialized sockets!");
+  },
   mounted() {
     this.winWidth = window.innerWidth;
     var test;
     window.onresize = () => {
       clearTimeout(test);
       test = setTimeout(this.resizeWidth, 1);
-    }
+    };
   },
   destroyed() {
-    window.onresize = null
-  }
-  ,
+    window.onresize = null;
+  },
   methods: {
+    initSockets() {
+      this.socket = Vue.prototype.$io("http://localhost:3000", {
+        origin: "*",
+        extraHeaders: {
+          "my-custom-header": "abcd",
+        },
+      });
+      this.socket.on("connect", () => {});
+      this.socket.emit("init", { roomID: Vue.prototype.$roomID, userID: Vue.prototype.$userID });
+      this.socket.on("recieve message", (args) => {
+        if (args["userID"] == Vue.prototype.$userID) {
+          return;
+        }
+        this.pushMessage(args);
+      });
+    },
+    pushMessage(msg) {
+      let color = "";
+      if (msg["question"] == 1) {
+        color = "color:red;";
+      }
+      document.getElementsByClassName("Messages")[0].innerHTML =
+        '<div><span style="font-weight:bolder;' +
+        color +
+        ';" class="kek">' +
+        msg["userID"] +
+        ": " +
+        "</span>" +
+        '<span style="' +
+        color +
+        ';word-wrap:break-word;" class="kek">' +
+        msg["msg"] +
+        "</span></div>" +
+        document.getElementsByClassName("Messages")[0].innerHTML;
+    },
     sendMessage() {
       var msg = document.getElementById("message").value;
       document.getElementById("message").value = "";
       if (msg != "") {
-        var roomID = "roomID";
-        var userID = "testman";
-        if(document.getElementById("question").checked){
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 1});
+        let url = window.location.href;
+        let arr = url.split("/");
+        let roomID = arr[arr.length - 1];
+        var userID = Vue.prototype.$userID;
+        this.socket.emit("chat message", {
+          msg: msg,
+          roomID: roomID,
+          userID: userID,
+          question: document.getElementById("question").checked,
+        });
+
+        if (document.getElementById("question").checked) {
+          document.getElementsByClassName("Messages")[0].innerHTML =
+            '<div><span style="font-weight:bolder;color:red;" class="kek">' +
+            userID +
+            ": " +
+            "</span>" +
+            '<span style="color:red;word-wrap:break-word;" class="kek">' +
+            msg +
+            "</span></div>" +
+            document.getElementsByClassName("Messages")[0].innerHTML;
         } else {
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 0});
-        }
-        if(document.getElementById("question").checked){
           document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><span style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</span>" +
-          "<span style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</span></div>" + 
-          document.getElementsByClassName("Messages")[0].innerHTML;
-        }else {
-          document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><span style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</span>" +
-          "<span style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</span></div>" + 
-          document.getElementsByClassName("Messages")[0].innerHTML;
+            '<div><span style="font-weight:bolder;" class="kek">' +
+            userID +
+            ": " +
+            "</span>" +
+            '<span style="word-wrap:break-word;" class="kek">' +
+            msg +
+            "</span></div>" +
+            document.getElementsByClassName("Messages")[0].innerHTML;
         }
       }
     },
-    collapse: function() {
-      this.isOpen = !this.isOpen
-      if(this.isOpen) {
-        this.imageSource = require('@/assets/collapse.png')
-      }else {
-        this.imageSource = require('@/assets/expand.png')
+    collapse: function () {
+      this.isOpen = !this.isOpen;
+      if (this.isOpen) {
+        this.imageSource = require("@/assets/collapse.png");
+      } else {
+        this.imageSource = require("@/assets/expand.png");
       }
-      this.$emit('collapse', this.isOpen);
+      this.$emit("collapse", this.isOpen);
     },
     resizeWidth() {
       this.winWidth = window.innerWidth;
-    }
+    },
   },
-  computed : {
+  computed: {
     CollapseMovmChat() {
-      if(this.isOpen) { 
-        if(this.winWidth < 810){
+      if (this.isOpen) {
+        if (this.winWidth < 810) {
           return {
-            top: '28%',
-            right: '50%',
+            top: "28%",
+            right: "50%",
           };
-        }else{
+        } else {
           return {
-            top: '85%',
-            right: '20.2%',
+            top: "85%",
+            right: "20.2%",
           };
         }
-        
-      }else {
-        if(this.winWidth < 810) {
+      } else {
+        if (this.winWidth < 810) {
           return {
-            top: '94%',
-            right: '50%'
-          }
-        }else{
+            top: "94%",
+            right: "50%",
+          };
+        } else {
           return {
-            top: '85%',
-            right: '0%' 
-          }
+            top: "85%",
+            right: "0%",
+          };
         }
       }
     },
-  }
+  },
 });
 </script>
 
 <style scoped>
-
 .Collapsebtn {
   display: flex;
   flex-direction: column;
@@ -211,8 +238,8 @@ export default defineComponent({
   border-radius: 2%;
   resize: none;
   font-family: "Ropa Sans", sans-serif;
-  border-style: none; 
-  border-color: Transparent; 
+  border-style: none;
+  border-color: Transparent;
   overflow: auto;
   height: 3vh;
   width: 30vh;
@@ -233,25 +260,25 @@ export default defineComponent({
   color: #696969;
 }
 
-.btn_send{
+.btn_send {
   padding-top: 2vh;
   padding-left: 3vh;
   width: 4vh;
   height: 4vh;
 }
 
-#question{
+#question {
   width: 2vh;
 }
 
-@media only screen and (max-width: 810px){
+@media only screen and (max-width: 810px) {
   .ComponentChat {
     top: 35%;
     width: 100%;
   }
-  .Collapsebtn{
+  .Collapsebtn {
     transform: rotate(90deg);
-    width: 7%
+    width: 7%;
   }
   .Messages {
     height: 54%;
