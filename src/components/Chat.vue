@@ -88,6 +88,8 @@ export default defineComponent({
       });
     },
     pushMessage(msg) {
+      //Probably need a whitespace filter
+
       let color = "";
       if (msg["question"] == 1) {
         color = "color:red;";
@@ -109,40 +111,18 @@ export default defineComponent({
     sendMessage() {
       var msg = document.getElementById("message").value;
       document.getElementById("message").value = "";
-      if (msg != "") {
-        let url = window.location.href;
-        let arr = url.split("/");
-        let roomID = arr[arr.length - 1];
-        var userID = Vue.prototype.$userID;
-        this.socket.emit("chat message", {
-          msg: msg,
-          roomID: roomID,
-          userID: userID,
-          question: document.getElementById("question").checked,
-        });
 
-        if (document.getElementById("question").checked) {
-          document.getElementsByClassName("Messages")[0].innerHTML =
-            '<div><span style="font-weight:bolder;color:red;" class="kek">' +
-            userID +
-            ": " +
-            "</span>" +
-            '<span style="color:red;word-wrap:break-word;" class="kek">' +
-            msg +
-            "</span></div>" +
-            document.getElementsByClassName("Messages")[0].innerHTML;
-        } else {
-          document.getElementsByClassName("Messages")[0].innerHTML =
-            '<div><span style="font-weight:bolder;" class="kek">' +
-            userID +
-            ": " +
-            "</span>" +
-            '<span style="word-wrap:break-word;" class="kek">' +
-            msg +
-            "</span></div>" +
-            document.getElementsByClassName("Messages")[0].innerHTML;
+      //Probably need a better whitespace filter
+      if (msg.replace(" \n\t\r", "") != "") {
+        let message = {
+          msg: msg,
+          roomID: Vue.prototype.$roomID,
+          userID: Vue.prototype.$userID,
+          question: document.getElementById("question").checked,
         }
-      }
+        this.socket.emit("chat message", message);
+        this.pushMessage(message);
+     }
     },
     collapse: function () {
       this.isOpen = !this.isOpen;
