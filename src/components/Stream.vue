@@ -28,7 +28,7 @@ const myHeader = new Headers({
 
 // hls plugin for videojs6
 /*require('videojs-contrib-hls/dist/videojs-contrib-hls.js') cette ligne casse le programme*/
-    window.videojs = videojs;
+window.videojs = videojs;
 
 export default {
   components: { Chat },
@@ -74,7 +74,8 @@ export default {
         "http://" +
           Vue.prototype.$BACKENDURL +
           ":8080/stream/get/" +
-          Vue.prototype.$roomID +"/"+
+          Vue.prototype.$roomID +
+          "/" +
           Vue.prototype.$userID,
         { method: "get", headers: myHeader }
       ).then((res) => {
@@ -104,8 +105,7 @@ export default {
     });
     //this.forceRefresh();
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     CollapseStream() {
       if (this.isOpen) {
