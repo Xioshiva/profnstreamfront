@@ -35,13 +35,70 @@
   </div>
 </template>
 
-
-
 <script>
 import { CollapseTransition } from "@ivanv/vue-collapse-transition";
 import { defineComponent } from "@vue/composition-api";
 import Vue from "vue";
+import swal from "sweetalert2";
 
+function lol() {
+  let userID = Vue.prototype.$userID;
+  let streamID = Vue.prototype.$roomID;
+  console.log("hello");
+
+  console.log("current userID = " + userID);
+  var newProfUserID = 11;
+  console.log("new userID = " + newProfUserID);
+
+  var userToBan = 2;
+  console.log("new userID to ban = " + userToBan);
+
+  var newStreamID = 0;
+  console.log("current streamID = " + streamID);
+  console.log("new streamID = " + newStreamID);
+
+  this.checkIfUserIsProf(newProfUserID).then((res) => {
+    if (res) {
+      swal
+        .fire({
+          position: "center-end",
+          target: document.getElementsByClassName("Messages"),
+          width: document.getElementsByClassName("Messages")[0].clientWidth,
+          text: "Que souhaitez-vous faire ?",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonColor: "#ff0000",
+          denyButtonColor: "#993bbb",
+          confirmButtonText: "Bannir l'utilisateur",
+          denyButtonText: `Supprimer le message`,
+          allowOutsideClick: false,
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.banUser(newStreamID, userToBan).then((res) => {
+              if (res == 200) {
+                swal.fire({
+                  position: "center-end",
+                  target: document.getElementsByClassName("Messages"),
+                  width:
+                    document.getElementsByClassName("Messages")[0].clientWidth,
+                  text: "Utilisateur banni!",
+                });
+              }
+            });
+          } else if (result.isDenied) {
+            swal.fire({
+              position: "center-end",
+              target: document.getElementsByClassName("Messages"),
+              width: document.getElementsByClassName("Messages")[0].clientWidth,
+              text: "Message supprimé",
+            });
+          }
+        });
+    }
+  });
+}
+window.lol = lol;
 export default defineComponent({
   components: {
     mixins: [Vue, Vue.prototype.$io, CollapseTransition],
@@ -49,6 +106,12 @@ export default defineComponent({
   },
   data() {
     return {
+      myHeader: new Headers({
+        "Access-Control-Allow-Origin":
+          "http://" + Vue.prototype.$BACKENDURL + ":8080",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }),
       socket: null,
       isOpen: true,
       imageSource: require("@/assets/collapse.png"),
@@ -71,15 +134,38 @@ export default defineComponent({
     window.onresize = null;
   },
   methods: {
-    initSockets() {
-      this.socket = Vue.prototype.$io("http://" + Vue.prototype.$BACKENDURL +":3000", {
-        origin: "*",
-        extraHeaders: {
-          "my-custom-header": "abcd",
-        },
+    banUser(streamID, userID) {
+      return fetch(
+        "http://localhost:8080/banned/add/" + streamID,
+        +"/" + userID,
+        { method: "get", headers: this.myHeader }
+      ).then((res) => {
+        return res.status;
       });
+    },
+    checkIfUserIsProf(userID) {
+      return fetch("http://localhost:8080/credential/" + userID, {
+        method: "get",
+        headers: this.myHeader,
+      }).then((res) => {
+        return res.json().then((o) => o["credential"]);
+      });
+    },
+    initSockets() {
+      this.socket = Vue.prototype.$io(
+        "http://" + Vue.prototype.$BACKENDURL + ":3000",
+        {
+          origin: "*",
+          extraHeaders: {
+            "my-custom-header": "abcd",
+          },
+        }
+      );
       this.socket.on("connect", () => {});
-      this.socket.emit("init", { roomID: Vue.prototype.$roomID, userID: Vue.prototype.$userID });
+      this.socket.emit("init", {
+        roomID: Vue.prototype.$roomID,
+        userID: Vue.prototype.$userID,
+      });
       this.socket.on("recieve message", (args) => {
         if (args["userID"] == Vue.prototype.$userID) {
           return;
@@ -89,23 +175,27 @@ export default defineComponent({
     },
     pushMessage(msg) {
       //Probably need a whitespace filter
-
+      console.log(msg);
       let color = "";
       if (msg["question"] == 1) {
         color = "color:red;";
       }
       document.getElementsByClassName("Messages")[0].innerHTML =
-        '<div><span style="font-weight:bolder;' +
+        '<div> \
+      <button onclick="lol()" style="  padding: 0;border: none;background: none;"> \
+        <p style="font-weight:bolder;' +
         color +
-        ';" class="kek">' +
+        '">' +
         msg["userID"] +
         ": " +
-        "</span>" +
-        '<span style="' +
+        '</p> \
+        <p style="' +
         color +
-        ';word-wrap:break-word;" class="kek">' +
+        'word-wrap:break-word;">' +
         msg["msg"] +
-        "</span></div>" +
+        "</p> \
+      </button> \
+      </div>" +
         document.getElementsByClassName("Messages")[0].innerHTML;
     },
     sendMessage() {
@@ -119,10 +209,10 @@ export default defineComponent({
           roomID: Vue.prototype.$roomID,
           userID: Vue.prototype.$userID,
           question: document.getElementById("question").checked,
-        }
+        };
         this.socket.emit("chat message", message);
         this.pushMessage(message);
-     }
+      }
     },
     collapse: function () {
       this.isOpen = !this.isOpen;
@@ -249,6 +339,12 @@ export default defineComponent({
 
 #question {
   width: 2vh;
+}
+
+.kek {
+  padding: 0;
+  border: none;
+  background: none;
 }
 
 @media only screen and (max-width: 810px) {

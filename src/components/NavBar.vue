@@ -9,6 +9,8 @@
       <p class="Timer"></p>
       <Icon class="myCoinIcon" icon="fa-solid:coins" />
       <p id="credit"></p>
+      <p id="name"></p>
+      <Icon class="myCoinIcon" icon="fa-solid:profil" />
     </div>
   </div>
 </template>
@@ -23,6 +25,7 @@ export default {
   },
   data() {
     return {
+      timerInterval: null,
       time: 0,
       credits: 42,
       myHeader: new Headers({
@@ -34,71 +37,125 @@ export default {
     };
   },
   beforeMount() {
+    console.log("RoomID ", Vue.prototype.$roomID);
     this.getTime(Vue.prototype.$userID, Vue.prototype.$roomID).then((a) => {
       this.time = Math.floor(Math.max(a, 0) / 1000);
       console.log("getTime Res:", this.time, "vs", a);
       if (this.time > 0) {
-        var timerInterval = window.setInterval(this.updateClock, 1000);
+        this.timerInterval = window.setInterval(this.updateClock, 1000);
       } else {
-        clearInterval(timerInterval);
-        if (!this.userHasCredit("testman")) {
-          swal
-            .fire({
-              title: "Periode gratuite terminée",
-              text: "Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
-              icon: "warning",
-              showDenyButton: true,
-              showCancelButton: false,
-              confirmButtonColor: "#993bbb",
-              confirmButtonText: "Continuer",
-              denyButtonText: `Quitter`,
-              allowOutsideClick: false,
-            })
-            .then((result) => {
-              if (result.isConfirmed) {
-                this.debitUser(2, 1).then((res) => {
-                  this.credits = res;
-                  if (this.credits >= 0) {
-                    // tester si le user a assez de crédit et si c'est le cas, on le débit
-                    swal.fire({
-                      icon: "success",
-                      title: "Merci",
-                      text: "Vous avez été débité de 1 crédit",
-                      showConfirmButton: false,
-                      allowOutsideClick: false,
-                      timer: 2000,
-                    });
-                    document.getElementById("credit").textContent = this.credits;
-                  } else {
-                    swal.fire({
-                      icon: "error",
-                      title: "Echec",
-                      text: "Vous n'avez pas assez de crédit pour continuer le cours",
-                      showConfirmButton: false,
-                      allowOutsideClick: false,
-                      timer: 2000,
-                    });
-                    // rediriger vers la page d'accueil
-                  }
-                });
-              } else if (result.isDenied) {
-                // rediriger vers la page d'accueil
-              }
-            });
-          //location.reload();
-        }
+        this.handleTimeOut();
       }
     });
   },
   methods: {
+    handleTimeOut(){
+       this.checkIfUserPaid(Vue.prototype.$userID, Vue.prototype.$roomID).then((res) => {
+        console.log("HEYHEYHEY");
+         if (!res) {
+            console.log("UPUPUPUPUP");
+            clearInterval(this.timerInterval);
+            swal
+              .fire({
+                title: "Periode gratuite terminée",
+                text: "Souhaitez-vous utiliser vos crédits pour continuer le cours ?",
+                icon: "warning",
+                showDenyButton: true,
+                showCancelButton: false,
+                confirmButtonColor: "#993bbb",
+                confirmButtonText: "Continuer",
+                denyButtonText: `Quitter`,
+                allowOutsideClick: false,
+              })
+              .then((result) => {
+                if (result.isConfirmed) {
+                  this.debitUser(Vue.prototype.$userID, Vue.prototype.$roomID).then((res) => {
+                    this.credits = res;
+                    if (this.credits >= 0) {
+                      // tester si le user a assez de crédit et si c'est le cas, on le débit
+                      swal.fire({
+                        icon: "success",
+                        title: "Merci",
+                        text: "Vous avez été débité de 1 crédit",
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        timer: 2000,
+                      });
+                      document.getElementById("credit").textContent = this.credits;
+                    } else {
+                      swal.fire({
+                        icon: "error",
+                        title: "Echec",
+                        text: "Vous n'avez pas assez de crédit pour continuer le cours",
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        timer: 2000,
+                      });
+                      // rediriger vers la page d'accueil
+                    }
+                    this.$root.$emit("clearSourceEvent");
+                    this.$router.push("acceuil");
+                  });
+                } else if (result.isDenied) {
+                  // rediriger vers la page d'accueil
+                  this.$root.$emit("clearSourceEvent");
+                  this.$router.push("acceuil");
+                }
+              });
+            //location.reload();
+          }
+        });
+    },
     userHasCredit(userID) {
       console.log(userID);
       return false;
     },
+    getUserCredits(userID) {
+      return fetch("http://" + Vue.prototype.$BACKENDURL + ":8080/payment/credits/" + userID, {
+        method: "get",
+        headers: this.myHeader,
+      }).then((res) => {
+        return res.json().then((o) => o["credits"]);
+      });
+    },
     updateClock() {
       document.getElementById("credit").textContent = this.credits;
-      this.time = Math.max(0, this.time -1);
-      document.getElementsByClassName("Timer")[0].innerHTML = this.toHHMMSS(this.time);
+      document.getElementById("name").textContent = Vue.prototype.$userID;
+      this.time = Math.max(0, this.time - 1);
+      document.getElementsByClassName("Timer")[0].innerHTML = this.toHHMMSS(
+        this.time
+      );
+    },
+    checkIfUserPaid(userID, streamID) {
+      return fetch(
+        "http://" + Vue.prototype.$BACKENDURL + ":8080/payment/check/" + streamID + "/" + userID,
+        { method: "get", headers: this.myHeader }
+      ).then((res) => {
+        return res.json().then((o) => o["credits"]);
+      });
+    },
+    // EXEMPLE checkIfUserIsProf(11).then(res => console.log("--> " + res));
+    checkIfUserIsProf(userID) {
+      return fetch("http://" + Vue.prototype.$BACKENDURL + ":8080/credential/" + userID, {
+        method: "get",
+        headers: this.myHeader,
+      }).then((res) => {
+        return res.json().then((o) => o["credential"]);
+      });
+    },
+    banUser(userID, streamID) {
+      return fetch(
+        "http://" + Vue.prototype.$BACKENDURL + ":8080/banned/add/" + streamID + "/" + userID,
+        { method: "get", headers: this.myHeader }
+      );
+    },
+    checkIfUserBanned(userID, streamID) {
+      return fetch(
+        "http://" + Vue.prototype.$BACKENDURL + ":8080/banned/check/" + streamID + "/" + userID,
+        { method: "get", headers: this.myHeader }
+      ).then((res) => {
+        return res.json().then((o) => o["result"]);
+      });
     },
     debitUser(userID, streamID) {
       return fetch(
@@ -215,6 +272,12 @@ p {
   font-size: 3vh;
 }
 
+.myProfilIcon {
+  margin: auto;
+  padding: 1vh 1vh 1vh 2vh;
+  font-size: 3vh;
+}
+
 .user_information #credit {
   margin: auto;
   padding: 1vh 2vh 0vh 1vh;
@@ -246,6 +309,17 @@ p {
   .myCoinIcon {
     margin: 0vh 0vh 0vh 12vh;
     padding: 0vh 0vh 0vh 0vh;
+    font-size: 3vh;
+  }
+  .myProfilIcon {
+    margin: 0vh 0vh 0vh 2vh;
+    padding: 0vh 0vh 0vh 0vh;
+    font-size: 3vh;
+  }
+
+  .user_information #name {
+    margin: auto;
+    padding: 1vh 0vh 0vh 1vh;
     font-size: 3vh;
   }
 }

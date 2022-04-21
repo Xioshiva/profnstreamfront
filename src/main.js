@@ -13,6 +13,9 @@ Vue.prototype.$roomID = location.href.substring(location.href.lastIndexOf('/')+1
 
 Vue.prototype.$BACKENDURL = "localhost";
 
+//Vue.prototype.$BACKENDPORT = "8080";
+//Vue.prototype.$CHATPORT = "3000";
+
 
 new Vue({
   render: h => h(App),
