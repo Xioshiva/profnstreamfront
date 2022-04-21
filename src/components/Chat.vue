@@ -1,168 +1,265 @@
 <template>
   <div>
-    <img :src="imageSource" width="40" height="120" :style="CollapseMovmChat" class="Collapsebtn" v-on:click="collapse"/>    
+    <img
+      :src="imageSource"
+      width="40"
+      height="120"
+      :style="CollapseMovmChat"
+      class="Collapsebtn"
+      v-on:click="collapse"
+    />
     <collapse-transition dimension="width" :duration="0">
-    <div class="ComponentChat" v-show="isOpen">
-      <div class="Messages"></div>
-      <div class="submitMessage">
-        <textarea
-          id="message"
-          type="text" 
-          @keypress.enter="sendMessage()"
-          v-model="text"
-          placeholder="Écrivez votre message..."
-        />
-        <img src="../assets/btn_send.png" width="40" height="40" class="btn_send" v-on:click="sendMessage()" />
-        <input type="checkbox" id="question" name="subscribe">
-        <label for="subscribeNews">question</label>
+      <div class="ComponentChat" v-show="isOpen">
+        <div class="Messages"></div>
+        <div class="submitMessage">
+          <textarea
+            id="message"
+            type="text"
+            @keypress.enter="sendMessage()"
+            v-model="text"
+            placeholder="Écrivez votre message..."
+          />
+          <img
+            src="../assets/btn_send.png"
+            width="40"
+            height="40"
+            class="btn_send"
+            v-on:click="sendMessage()"
+          />
+          <input type="checkbox" id="question" name="subscribe" />
+          <label for="subscribeNews">question</label>
+        </div>
+        <label>{{ checked }}</label>
       </div>
-      <label>{{ checked }}</label>
-    </div>
     </collapse-transition>
   </div>
 </template>
 
-
-
 <script>
-import { CollapseTransition } from "@ivanv/vue-collapse-transition"
+import { CollapseTransition } from "@ivanv/vue-collapse-transition";
 import { defineComponent } from "@vue/composition-api";
-import { io } from "socket.io-client";
+import Vue from "vue";
+import swal from "sweetalert2";
 
-const socket = io("http://localhost:3000", {
-  origin: "*",
-  extraHeaders: {
-    "my-custom-header": "abcd",
-  },
-});
-socket.on("connect", () => {});
+function lol() {
+  let userID = Vue.prototype.$userID;
+  let streamID = Vue.prototype.$roomID;
+  console.log("hello");
 
-function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * 
- charactersLength));
-   }
-   console.log(result);
-   return "testman";
+  console.log("current userID = " + userID);
+  var newProfUserID = 11;
+  console.log("new userID = " + newProfUserID);
+
+  var userToBan = 2;
+  console.log("new userID to ban = " + userToBan);
+
+  var newStreamID = 0;
+  console.log("current streamID = " + streamID);
+  console.log("new streamID = " + newStreamID);
+
+  this.checkIfUserIsProf(newProfUserID).then((res) => {
+    if (res) {
+      swal
+        .fire({
+          position: "center-end",
+          target: document.getElementsByClassName("Messages"),
+          width: document.getElementsByClassName("Messages")[0].clientWidth,
+          text: "Que souhaitez-vous faire ?",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonColor: "#ff0000",
+          denyButtonColor: "#993bbb",
+          confirmButtonText: "Bannir l'utilisateur",
+          denyButtonText: `Supprimer le message`,
+          allowOutsideClick: false,
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.banUser(newStreamID, userToBan).then((res) => {
+              if (res == 200) {
+                swal.fire({
+                  position: "center-end",
+                  target: document.getElementsByClassName("Messages"),
+                  width:
+                    document.getElementsByClassName("Messages")[0].clientWidth,
+                  text: "Utilisateur banni!",
+                });
+              }
+            });
+          } else if (result.isDenied) {
+            swal.fire({
+              position: "center-end",
+              target: document.getElementsByClassName("Messages"),
+              width: document.getElementsByClassName("Messages")[0].clientWidth,
+              text: "Message supprimé",
+            });
+          }
+        });
+    }
+  });
 }
-var id = makeid(5);
-var roomID = "roomID";
-socket.emit("init", {roomID: roomID, userID: id});
-socket.on("recieve message", (args) => {
-  console.log("Recieved!");
-  if(args["question"] == 1){
-    document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
-    "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
-    document.getElementsByClassName("Messages")[0].innerHTML;  
-  } else {
-    document.getElementsByClassName("Messages")[0].innerHTML =
-    "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + args["userID"] + ": " + "</p>" +
-    "<p style=\"word-wrap:break-word;\" class=\"kek\">" + args["msg"] + "</p></div>" + 
-    document.getElementsByClassName("Messages")[0].innerHTML;
-  }
-});
-
-
+window.lol = lol;
 export default defineComponent({
   components: {
+    mixins: [Vue, Vue.prototype.$io, CollapseTransition],
     CollapseTransition,
   },
   data() {
     return {
+      myHeader: new Headers({
+        "Access-Control-Allow-Origin":
+          "http://" + Vue.prototype.$BACKENDURL + ":8080",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }),
+      socket: null,
       isOpen: true,
-      imageSource: require('@/assets/collapse.png'),
-      winWidth : 0
-    }
-  },  
+      imageSource: require("@/assets/collapse.png"),
+      winWidth: 0,
+    };
+  },
+  beforeMount() {
+    this.initSockets();
+    console.log("Hey initialized sockets!");
+  },
   mounted() {
     this.winWidth = window.innerWidth;
     var test;
     window.onresize = () => {
       clearTimeout(test);
       test = setTimeout(this.resizeWidth, 1);
-    }
+    };
   },
   destroyed() {
-    window.onresize = null
-  }
-  ,
+    window.onresize = null;
+  },
   methods: {
+    banUser(streamID, userID) {
+      return fetch(
+        "http://localhost:8080/banned/add/" + streamID,
+        +"/" + userID,
+        { method: "get", headers: this.myHeader }
+      ).then((res) => {
+        return res.status;
+      });
+    },
+    checkIfUserIsProf(userID) {
+      return fetch("http://localhost:8080/credential/" + userID, {
+        method: "get",
+        headers: this.myHeader,
+      }).then((res) => {
+        return res.json().then((o) => o["credential"]);
+      });
+    },
+    initSockets() {
+      this.socket = Vue.prototype.$io(
+        "http://" + Vue.prototype.$BACKENDURL + ":3000",
+        {
+          origin: "*",
+          extraHeaders: {
+            "my-custom-header": "abcd",
+          },
+        }
+      );
+      this.socket.on("connect", () => {});
+      this.socket.emit("init", {
+        roomID: Vue.prototype.$roomID,
+        userID: Vue.prototype.$userID,
+      });
+      this.socket.on("recieve message", (args) => {
+        if (args["userID"] == Vue.prototype.$userID) {
+          return;
+        }
+        this.pushMessage(args);
+      });
+    },
+    pushMessage(msg) {
+      //Probably need a whitespace filter
+      console.log(msg);
+      let color = "";
+      if (msg["question"] == 1) {
+        color = "color:red;";
+      }
+      document.getElementsByClassName("Messages")[0].innerHTML =
+        '<div> \
+      <button onclick="lol()" style="  padding: 0;border: none;background: none;"> \
+        <p style="font-weight:bolder;' +
+        color +
+        '">' +
+        msg["userID"] +
+        ": " +
+        '</p> \
+        <p style="' +
+        color +
+        'word-wrap:break-word;">' +
+        msg["msg"] +
+        "</p> \
+      </button> \
+      </div>" +
+        document.getElementsByClassName("Messages")[0].innerHTML;
+    },
     sendMessage() {
       var msg = document.getElementById("message").value;
       document.getElementById("message").value = "";
-      if (msg != "") {
-        var roomID = "roomID";
-        var userID = "testman";
-        if(document.getElementById("question").checked){
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 1});
-        } else {
-          socket.emit("chat message", { msg: msg, roomID: roomID, userID: userID, question: 0});
-        }
-        if(document.getElementById("question").checked){
-          document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><p style=\"font-weight:bolder;color:red;\" class=\"kek\">" + userID + ": " + "</p>" +
-          "<p style=\"color:red;word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
-          document.getElementsByClassName("Messages")[0].innerHTML;
-        }else {
-          document.getElementsByClassName("Messages")[0].innerHTML =
-          "<div><p style=\"font-weight:bolder;\" class=\"kek\">" + userID + ": " + "</p>" +
-          "<p style=\"word-wrap:break-word;\" class=\"kek\">" + msg + "</p></div>" + 
-          document.getElementsByClassName("Messages")[0].innerHTML;
-        }
+
+      //Probably need a better whitespace filter
+      if (msg.replace(" \n\t\r", "") != "") {
+        let message = {
+          msg: msg,
+          roomID: Vue.prototype.$roomID,
+          userID: Vue.prototype.$userID,
+          question: document.getElementById("question").checked,
+        };
+        this.socket.emit("chat message", message);
+        this.pushMessage(message);
       }
     },
-    collapse: function() {
-      this.isOpen = !this.isOpen
-      if(this.isOpen) {
-        this.imageSource = require('@/assets/collapse.png')
-      }else {
-        this.imageSource = require('@/assets/expand.png')
+    collapse: function () {
+      this.isOpen = !this.isOpen;
+      if (this.isOpen) {
+        this.imageSource = require("@/assets/collapse.png");
+      } else {
+        this.imageSource = require("@/assets/expand.png");
       }
-      this.$emit('collapse', this.isOpen);
+      this.$emit("collapse", this.isOpen);
     },
     resizeWidth() {
       this.winWidth = window.innerWidth;
-    }
+    },
   },
-  computed : {
+  computed: {
     CollapseMovmChat() {
-      if(this.isOpen) { 
-        if(this.winWidth < 810){
+      if (this.isOpen) {
+        if (this.winWidth < 810) {
           return {
-            top: '28%',
-            right: '50%',
+            top: "28%",
+            right: "50%",
           };
-        }else{
+        } else {
           return {
-            top: '85%',
-            right: '20.2%',
+            top: "85%",
+            right: "20.2%",
           };
         }
-        
-      }else {
-        if(this.winWidth < 810) {
+      } else {
+        if (this.winWidth < 810) {
           return {
-            top: '94%',
-            right: '50%'
-          }
-        }else{
+            top: "94%",
+            right: "50%",
+          };
+        } else {
           return {
-            top: '85%',
-            right: '0%' 
-          }
+            top: "85%",
+            right: "0%",
+          };
         }
       }
     },
-  }
+  },
 });
 </script>
 
 <style scoped>
-
 .Collapsebtn {
   display: flex;
   flex-direction: column;
@@ -211,8 +308,8 @@ export default defineComponent({
   border-radius: 2%;
   resize: none;
   font-family: "Ropa Sans", sans-serif;
-  border-style: none; 
-  border-color: Transparent; 
+  border-style: none;
+  border-color: Transparent;
   overflow: auto;
   height: 3vh;
   width: 30vh;
@@ -233,25 +330,31 @@ export default defineComponent({
   color: #696969;
 }
 
-.btn_send{
+.btn_send {
   padding-top: 2vh;
   padding-left: 3vh;
   width: 4vh;
   height: 4vh;
 }
 
-#question{
+#question {
   width: 2vh;
 }
 
-@media only screen and (max-width: 810px){
+.kek {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+@media only screen and (max-width: 810px) {
   .ComponentChat {
     top: 35%;
     width: 100%;
   }
-  .Collapsebtn{
+  .Collapsebtn {
     transform: rotate(90deg);
-    width: 7%
+    width: 7%;
   }
   .Messages {
     height: 54%;
